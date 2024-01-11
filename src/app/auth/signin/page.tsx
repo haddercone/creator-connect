@@ -1,6 +1,3 @@
-// "use client";
-
-// import { signIn } from "next-auth/react";
 import { ImGithub } from "react-icons/im";
 import { FaXTwitter } from "react-icons/fa6";
 import LoginButton from "@/components/LoginButton";

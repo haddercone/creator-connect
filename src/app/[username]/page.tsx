@@ -1,40 +1,50 @@
 "use client";
 
 import { clientSession } from "../auth/clientSession";
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { useRouter, redirect } from "next/navigation";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useParams, notFound } from "next/navigation";
 import getCreatorPageDetails from "../actions/actions";
 import { UserProps, Username } from "./types";
 
-const page = () => {
+const page : React.FC = () => {
   const params = useParams();
   const username: Username = params.username;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserProps>({});
-  const router = useRouter();
 
   useEffect(() => {
-    setLoading(true);
-    (async () => {
+    async function getUserData() {
       const userDetails = await getCreatorPageDetails({ username });
       if (!userDetails) {
-        router.push("/");
+        notFound()
       } else {
         setUser(userDetails);
         setLoading(false);
       }
-    })();
+    };
+
+    getUserData();
   }, []);
 
   return (
     <>
-      {/* <p>{user && JSON.stringify(user, null, 2)}</p> */}
-      <section className="mt-2 flex bg-[#F1F1F1] items-center">
+      <section className=" min-h-screen flex flex-col justify-center items-center bg-gray-900  text-white ">
       {loading ? <p>Loading...</p> : (
-        <div className="flex gap-4 p-2 justify-center items-center">
-          <img draggable={false} className="w-40 h-40 rounded-full" src={user?.profilePic as string} alt="" />
-          <p className="text-4xl font-bold">{user?.name}</p>  
+        <div className="bg-[#00000039] py-2 px-4 rounded my-2">
+          <div className="flex gap-5 p-2 flex-col justify-center items-center">
+            <img draggable={false} className="w-40 h-40 rounded-full" src={user?.profilePic as string} alt="" />
+            <p className="text-4xl font-bold">{user?.name}</p>  
+          </div>
+
+          <div className="flex justify-center items-center flex-col gap-5 ">
+            <p>Ask your question to {user?.name}</p>
+            <form>
+              <textarea  placeholder={`Ask your question to ${user?.name}...`} className="rounded  min-h-48 max-h-48 outline-none p-2 bg-[#FFFFFF39] border-2 border-slate-900" cols={30} rows={5}></textarea> <br />
+              <button  className="rounded w-full px-4 py-2 my-2  text-black bg-white duration-200" type="submit">
+                Ask your question
+              </button>
+            </form>
+          </div>
         </div>
       )}
       </section>

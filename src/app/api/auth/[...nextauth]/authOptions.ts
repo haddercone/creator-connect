@@ -2,8 +2,18 @@
 import Github from "next-auth/providers/github"; 
 import Twitter from "next-auth/providers/twitter";
 import { NextAuthOptions } from "next-auth";
-
 import { prisma } from "@/server/db/PrismaClientSingleton";
+
+function getUpdatedFields(existingUser:any, newUser:any) {
+  const updatedFields : any = {};
+  for (const [key, value] of Object.entries(newUser)) {
+      if (existingUser.hasOwnProperty(key) && existingUser[key] !== value) {
+          updatedFields[key] = value;
+      }
+  }
+  return Object.keys(updatedFields).length > 0 ? updatedFields : null;
+}
+
 
 export const authOptions : NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -29,33 +39,45 @@ export const authOptions : NextAuthOptions = {
           // console.log("Profile", profile);
           // console.log("User", user);
           // console.log("Account", account);
-          
+
+          const inCommingUserObject = {
+              username: (profile?.screen_name || profile?.login) as string,
+              name: user?.name as string,
+              email: user?.email as string,
+              profilePic: user?.image as string,
+          }
+
           const isAuthorisedProvider : Boolean = authProviders.some((authProvider:String) => {
             return authProvider === account?.provider
           })
 
           if(!isAuthorisedProvider) return false;
 
-          const userExists = await prisma.user.findFirst({
+          const existingUser = await prisma.user.findFirst({
             where : {
               email: user.email as string,
             }
           })
 
-          if(userExists) return true;
+          if(existingUser)  {
+            const updatedFields = getUpdatedFields(existingUser, inCommingUserObject)
 
-          await  prisma.user.create({
-            data : {
-              username: profile?.screen_name || profile?.login,
-              name: user?.name as string,
-              email: user?.email as string,
-              profilePic: user?.image as string,
-            }
-          })
+            if(!updatedFields) return true;
 
+            await prisma.user.update({
+              where : {
+                email: user.email as string
+              },
+              data: updatedFields
+            })
+
+            return true;
+          }
+
+          await  prisma.user.create({ data : inCommingUserObject })
           return true;
+          
         } catch (error) {
-
           console.log(error);
           return false;
         }

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { serverSession } from "./auth/serverSession";
-
+import Header from "@/components/Header";
 export default async function Home() {
   const session = await serverSession();
 
@@ -9,7 +9,8 @@ export default async function Home() {
   }
 
   return (
-    <main className="">
+    <main>
+      <Header />
       <section className="relative m-2 md:m-0 min-h-[80vh] flex justify-center items-center flex-col gap-10 text-center">
         <h1 className="md:text-6xl text-4xl font-bold">Connect With your favourite creators </h1>
         <p className="text-2xl">Ask question to your favourite creators</p>

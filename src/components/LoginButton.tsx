@@ -1,15 +1,12 @@
 "use client"
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 type ButtonProps = {
-  provider:"string";
+  provider: string;
   icon : any;
 }
 
 const LoginButton = ({provider, icon}: ButtonProps ) => { 
-  const router = useRouter();
-  console.log("Rounter", router);
   
   return (
     <button
