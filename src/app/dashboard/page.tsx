@@ -1,31 +1,75 @@
-import Header from "@/components/Header";
-import { redirect } from "next/navigation";
-// import Link from "next/link";
-import { serverSession } from "../auth/serverSession";
-import LogoutButton from "@/components/LogoutButton";
+"use client";
 
-const DashBoard = async () => {
-  const session = await serverSession()
-  
-  if (!session) {
-    redirect("/");
+import { redirect } from "next/navigation";
+import { CiMenuBurger } from "react-icons/ci";
+import { clientSession } from "../auth/clientSession";
+import LogoutButton from "@/components/LogoutButton";
+import React, { useState } from "react";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { signOut } from "next-auth/react";
+
+const DashBoard = () => {
+  const session = clientSession();
+  const [open, setOpen] = useState(false);
+  const { data, status } = session;
+
+  function handleMenuClick() {
+    setOpen(!open);
+  }
+
+  if(status === "unauthenticated") {
+    redirect("/")
+  }
+
+  const ref = useClickOutside(handleMenuClick);
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
   }
 
   return (
-    <section className="flex gap-4 bg-slate-800 min-h-screen">
-      {/* <Header /> */}
-      
-      <aside className="w-1/6">
-      <div className="w-1/6 fixed bottom-0 top-0 left-0 flex flex-col justify-between bg-slate-900 p-4  text-white">
-          <div className="flex justify-around items-center gap-3 rounded bg-[#FFFFFF39] px-4 py-2">
-            <img className="w-14 h-14 rounded-full" src={session.user.image as string} alt="" />
-            {session.user.name}
+    <section className=" bg-slate-800 min-h-screen">
+      {open && (
+        <aside
+          ref={ref}
+          className={`fixed  bottom-0  top-0 left-0 flex flex-col justify-between bg-slate-900 p-4  text-white ${open ? "animate-openmenu": "animate-closemenu"}`}
+        >
+          <div className="flex justify-around items-center gap-3 rounded bg-[#FFFFFF39] px-4 py-2 flex-wrap container">
+            <img
+              className="w-14 h-14 rounded-full"
+              src={data?.user.image as string}
+              alt=""
+            />
+            {data?.user.name}
           </div>
           <LogoutButton />
+        </aside>
+      )}
+
+      <div className="text-white">
+        <nav className="flex justify-between p-4 gap-4 items-center bg-slate-900">
+        <div className="flex gap-4">
+        <button className="" onClick={handleMenuClick}>
+          <CiMenuBurger />
+        </button>
+        <p>Creator connect / <span className="font-bold">Dashboard</span></p>
         </div>
-      </aside>
-      <div className="grow w-1/2">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam hic corrupti facere nam, error cumque cupiditate necessitatibus non fugit laudantium cum laborum numquam? Dicta dignissimos cum doloribus officiis vero odit repudiandae illum mollitia id eligendi quia dolore ullam ab libero corporis amet magni rem dolorum, architecto sit fugit dolor fugiat! Ipsum sint doloremque aliquid sit quasi libero perspiciatis eveniet aliquam delectus architecto et, quae rem iure numquam culpa voluptatum dolore laudantium cumque repellendus odit sunt repudiandae blanditiis nostrum. Doloribus error distinctio at cum doloremque molestias eos ratione eligendi animi atque dignissimos, blanditiis beatae eum, sint pariatur qui, ab ducimus illum?</p>
+        <button onClick={() => signOut({redirect:true})}>Log Out</button>
+        </nav>
+        
+      </div>
+      <div className="p-4">
+        <p className="text-2xl bg-slate-950 rounded p-2">{data?.user.name}'s dashboard</p>
+        <div className="flex  flex-col sm:flex-row gap-4 min-h-full my-4">
+          <div className="w-full sm:w-1/5 flex gap-4 flex-col bg-slate-900 p-4 rounded">
+            <button className="bg-black w-full rounded py-2">All questions</button>
+            <button className="bg-black w-full rounded py-2">Answered questions</button>
+            <button className="bg-black w-full rounded py-2">Deleted questions</button>
+          </div>
+          <div className="w-full">
+            data  
+          </div>
+        </div>
       </div>
     </section>
   );
