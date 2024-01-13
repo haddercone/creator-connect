@@ -95,7 +95,7 @@ export const authOptions : NextAuthOptions = {
             session.accessToken = token?.accessToken
             session.refreshToken = token?.refreshToken
             session.user.id = token.sub
-            console.log("User session: " , session);
+            // console.log("User session: " , session);
             
             return session
         }

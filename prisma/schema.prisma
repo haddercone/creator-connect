@@ -16,11 +16,10 @@ model Question {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   questionText    String
   isAnswered      Boolean   @default(false)
+  isDeleted       Boolean   @default(false) 
   recipient       User      @relation(fields: [recipientId], references: [id])
   recipientId     String    @db.ObjectId
   answer          Answer?     
-  answerId        String?   @unique
-
 }
 
 model User {
@@ -40,3 +39,5 @@ model User {
     questionId  String      @unique @db.ObjectId
 
   }
+
+// TODO: Handle duplicate username from different Oauthproviders and also handle username shift from one user to another user
