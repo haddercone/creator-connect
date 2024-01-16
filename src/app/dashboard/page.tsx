@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
 import { MdDelete , MdOutlineQuestionAnswer} from "react-icons/md";
@@ -43,7 +43,7 @@ const DashBoard = () => {
             }`}
           >
             <div className="flex justify-around items-center gap-3 rounded bg-[#FFFFFF39] px-4 py-2 flex-wrap container">
-              <img
+              <Image
                 className="w-14 h-14 rounded-full"
                 src={data?.user.image as string}
                 alt=""

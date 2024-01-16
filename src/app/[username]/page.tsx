@@ -7,7 +7,7 @@ import { getCreatorPageDetails , createQuestion} from "../actions/actions";
 import { UserProps, Username } from "./types";
 
 
-const page : React.FC = () => {
+const page = () => {
   const params = useParams();
   const username: Username = params.username;
   const [loading, setLoading] = useState(true);
