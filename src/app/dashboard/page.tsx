@@ -4,7 +4,7 @@ import { redirect, useRouter } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
 import { MdDelete , MdOutlineQuestionAnswer} from "react-icons/md";
 import { BiComment } from "react-icons/bi";
-import { clientSession } from "../auth/clientSession";
+import { ClientSession } from "../auth/ClientSession";
 import LogoutButton from "@/components/LogoutButton";
 import React, { useEffect, useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -15,7 +15,7 @@ import DashBoardSkeleton from "@/components/DashBoardSkeleton";
 import { Question } from "./types";
 
 const DashBoard = () => {
-  const session = clientSession();
+  const session = ClientSession();
   const [open, setOpen] = useState(false);
   const { data, status } = session;
 
@@ -69,7 +69,7 @@ const DashBoard = () => {
         </div>
         <div className="p-4">
           <p className="text-2xl bg-slate-950 rounded p-2">
-            {data?.user.name}'s dashboard
+            {data?.user.name}&apos;s dashboard
           </p>
           <div className="flex  flex-col sm:flex-row gap-4 min-h-full my-4">
             <div className="w-full sm:w-1/5 flex  flex-col  rounded ">

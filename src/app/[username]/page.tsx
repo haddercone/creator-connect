@@ -1,13 +1,14 @@
 "use client";
 
-import { clientSession } from "../auth/clientSession";
+import { ClientSession } from "../auth/ClientSession";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getCreatorPageDetails , createQuestion} from "../actions/actions";
 import { UserProps, Username } from "./types";
+import Image from "next/image";
 
 
-const page = () => {
+const UserPage = () => {
   const params = useParams();
   const username: Username = params.username;
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,7 @@ const page = () => {
       {loading ? <p>Loading...</p> : (
         <div className="bg-[#00000039] py-2 px-4 rounded my-2">
           <div className="flex gap-5 p-2 flex-col justify-center items-center">
-            <img draggable={false} className="w-40 h-40 rounded-full" src={user?.profilePic as string} alt="" />
+            <Image draggable={false} className="w-40 h-40 rounded-full" src={user?.profilePic as string} alt="user_profile" />
             <p className="text-4xl font-bold">{user?.name}</p>  
           </div>
 
@@ -55,4 +56,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default UserPage;

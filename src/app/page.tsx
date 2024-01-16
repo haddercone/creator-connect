@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { serverSession } from "./auth/serverSession";
+import { ServerSession } from "./auth/ServerSession";
 import Header from "@/components/Header";
 export default async function Home() {
-  const session = await serverSession();
+  const session = await ServerSession();
 
   if (session) {
     redirect("/dashboard");
