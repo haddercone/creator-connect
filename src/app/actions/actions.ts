@@ -3,6 +3,7 @@
 import { prisma } from "@/server/db/PrismaClientSingleton";
 import { UserProps } from "../[username]/types";
 import { Question } from "../dashboard/types";
+import { revalidatePath } from "next/cache";
 
 export async function getCreatorPageDetails({
   username,
@@ -16,17 +17,19 @@ export async function getCreatorPageDetails({
       },
     });
 
-    const answers = await prisma.answer.findMany();
+    // const answers = await prisma.answer.findMany();
 
 
-    return [user, answers];
+    return user;
   } catch (error) {
     console.log("Couldn't find user", error);
   }
 }
 
 export async function createQuestion(formData: FormData, user: UserProps) {
-  const question = formData.get("question");
+  const question = formData.get("question");  
+  // console.log(user);
+  
   const recipientId = user?.id;
 
   try {
@@ -44,15 +47,17 @@ export async function createQuestion(formData: FormData, user: UserProps) {
 export async function getAllQuestionsByUser(email: string) {
   try {
     const questions: Question[] | null = await prisma.question.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
       where: {
         isDeleted: false,
-        isAnswered: false,
         recipient: {
           email: email,
         },
       },
     });
-    return questions;
+    return questions ?? [];
   } catch (error) {
     console.log("error getting questions", error);
   }
@@ -82,5 +87,20 @@ export async function answerQuestion(questionId: string, formData: FormData) {
     });
   } catch (error) {
     console.log("Error answering question", error);
+  }
+}
+
+export async function deleteQuestion(questionId: string) {
+  try {
+    await prisma.question.delete({
+      where: {
+        id : questionId,
+      }
+    })
+    
+  } catch (error) {
+    console.log("error deleting question", error);
+  } finally {
+    revalidatePath("/dashboard")
   }
 }

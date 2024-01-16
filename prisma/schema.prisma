@@ -17,6 +17,7 @@ model Question {
   questionText    String
   isAnswered      Boolean   @default(false)
   isDeleted       Boolean   @default(false) 
+  createdAt       DateTime  @default(now())
   recipient       User      @relation(fields: [recipientId], references: [id])
   recipientId     String    @db.ObjectId
   answer          Answer?     
@@ -35,7 +36,7 @@ model User {
   model Answer {
     id          String      @id @default(auto()) @map("_id") @db.ObjectId
     answer      String
-    question    Question    @relation(fields: [questionId], references: [id])
+    question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
     questionId  String      @unique @db.ObjectId
 
   }

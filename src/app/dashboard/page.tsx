@@ -1,8 +1,8 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
-import { MdDelete } from "react-icons/md";
+import { MdDelete , MdOutlineQuestionAnswer} from "react-icons/md";
 import { BiComment } from "react-icons/bi";
 import { clientSession } from "../auth/clientSession";
 import LogoutButton from "@/components/LogoutButton";
@@ -10,9 +10,10 @@ import React, { useEffect, useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { signOut } from "next-auth/react";
-import { getAllQuestionsByUser, answerQuestion } from "../actions/actions";
+import { getAllQuestionsByUser, answerQuestion, deleteQuestion } from "../actions/actions";
 import DashBoardSkeleton from "@/components/DashBoardSkeleton";
 import { Question } from "./types";
+
 const DashBoard = () => {
   const session = clientSession();
   const [open, setOpen] = useState(false);
@@ -101,7 +102,7 @@ function Questions({ email }: { email: string }) {
   useEffect(() => {
     (async () => {
       const questions = await getAllQuestionsByUser(email);
-      console.log(questions);
+      // console.log(questions);
       setQuestions(questions as Question[]);
       setOpenStates(new Array(questions?.length).fill(false));
     })();
@@ -115,10 +116,13 @@ function Questions({ email }: { email: string }) {
   };
 
   return (
-    questions &&
+    questions.length === 0 ? <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
+      <div className="text-6xl"><MdOutlineQuestionAnswer/></div>
+      <p>No questions yet...</p>
+    </div> :
     questions.map((question, idx) => {
       return (
-        <React.Fragment key={question?.id as string}>
+        <div key={question?.id as string}>
           <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">
             <p>{question?.questionText}</p>
             <div className=" flex justify-between gap-4">
@@ -130,6 +134,7 @@ function Questions({ email }: { email: string }) {
                 <BiComment />
               </button>
               <button
+                onClick={() => deleteQuestion(question.id as string)}
                 className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
                 title="delete"
               >
@@ -156,7 +161,7 @@ function Questions({ email }: { email: string }) {
               </form>
             </>
           )}
-        </React.Fragment>
+        </div>
       );
     })
   );

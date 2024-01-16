@@ -16,7 +16,7 @@ const page : React.FC = () => {
   useEffect(() => {
     async function getUserData() {
       const userDetails = await getCreatorPageDetails({ username });
-      console.log(userDetails);
+      // console.log(userDetails);
       
       if (!userDetails) {
 
