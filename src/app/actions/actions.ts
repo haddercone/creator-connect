@@ -1,9 +1,9 @@
 "use server";
 
 import { prisma } from "@/server/db/PrismaClientSingleton";
-import { UserProps } from "../[username]/types";
 import { Question } from "../dashboard/types";
 import { revalidatePath } from "next/cache";
+import { AnswerSchema, QuestionSchema } from "@/lib/types";
 
 export async function getCreatorPageDetails({
   username,
@@ -19,18 +19,27 @@ export async function getCreatorPageDetails({
 
     // const answers = await prisma.answer.findMany();
 
-
     return user;
   } catch (error) {
     console.log("Couldn't find user", error);
   }
 }
 
-export async function createQuestion(formData: FormData, user: UserProps) {
-  const question = formData.get("question");  
-  // console.log(user);
-  
-  const recipientId = user?.id;
+export async function createQuestion(newQuestion: unknown) {
+  const result = QuestionSchema.safeParse(newQuestion);
+
+  if (!result.success) {
+    let errorMsg = "";
+    result.error.format();
+    result.error.issues.forEach((issue) => {
+      errorMsg = errorMsg + issue.path[0] + ": " + issue.message + ". ";
+    });
+
+    return {
+      error: errorMsg,
+    };
+  }
+  const { question, recipientId } = result.data;
 
   try {
     await prisma.question.create({
@@ -63,12 +72,27 @@ export async function getAllQuestionsByUser(email: string) {
   }
 }
 
-export async function answerQuestion(questionId: string, formData: FormData) {
-  const answerText = formData.get("answerText");
+export async function answerQuestion(newAnswer: unknown) {
+  const result = AnswerSchema.safeParse(newAnswer);
+
+  if (!result.success) {
+    let errorMsg = "";
+    result.error.format();
+    result.error.issues.forEach((issue) => {
+      errorMsg = errorMsg + issue.path[0] + ": " + issue.message + ". ";
+    });
+
+    return {
+      error: errorMsg,
+    };
+  }
+
+  const { answer, questionId } = result.data;
+
   try {
     await prisma.answer.create({
       data: {
-        answer: answerText as string,
+        answer: answer as string,
         question: {
           connect: {
             id: questionId,
@@ -87,6 +111,9 @@ export async function answerQuestion(questionId: string, formData: FormData) {
     });
   } catch (error) {
     console.log("Error answering question", error);
+    return {
+      error: "Error answering question",
+    }
   }
 }
 
@@ -94,13 +121,11 @@ export async function deleteQuestion(questionId: string) {
   try {
     await prisma.question.delete({
       where: {
-        id : questionId,
-      }
-    })
-    
+        id: questionId,
+      },
+    });
+    revalidatePath("/dashboard");
   } catch (error) {
     console.log("error deleting question", error);
-  } finally {
-    revalidatePath("/dashboard")
   }
 }

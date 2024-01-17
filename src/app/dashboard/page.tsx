@@ -1,21 +1,26 @@
 "use client";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
-import { MdDelete , MdOutlineQuestionAnswer} from "react-icons/md";
+import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import { BiComment } from "react-icons/bi";
-import { ClientSession } from "../auth/ClientSession";
 import LogoutButton from "@/components/LogoutButton";
 import React, { useEffect, useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { useClientSession } from "@/hooks/useClientSession";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { signOut } from "next-auth/react";
-import { getAllQuestionsByUser, answerQuestion, deleteQuestion } from "../actions/actions";
+import {
+  getAllQuestionsByUser,
+  answerQuestion,
+  deleteQuestion,
+} from "../actions/actions";
 import DashBoardSkeleton from "@/components/DashBoardSkeleton";
 import { Question } from "./types";
+import AnswerForm from "@/components/AnswerForm";
 
 const DashBoard = () => {
-  const session = ClientSession();
+  const session = useClientSession();
   const [open, setOpen] = useState(false);
   const { data, status } = session;
 
@@ -46,7 +51,9 @@ const DashBoard = () => {
               <Image
                 className="w-14 h-14 rounded-full"
                 src={data?.user.image as string}
-                alt=""
+                width={200}
+                height={200}
+                alt="user_img"
               />
               {data?.user.name}
             </div>
@@ -99,14 +106,13 @@ const DashBoard = () => {
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [openStates, setOpenStates] = useState<boolean[]>([]);
+
   useEffect(() => {
     (async () => {
       const questions = await getAllQuestionsByUser(email);
-      // console.log(questions);
       setQuestions(questions as Question[]);
       setOpenStates(new Array(questions?.length).fill(false));
     })();
-
   }, []);
 
   const toggleOpenState = (index: number) => {
@@ -114,12 +120,21 @@ function Questions({ email }: { email: string }) {
     newOpenStates[index] = !newOpenStates[index];
     setOpenStates(newOpenStates);
   };
+  
+  async function deleteAction(id: string) {
+    const newQuestions = questions.filter((question) => question.id !== id);
+    setQuestions(newQuestions);
+    await deleteQuestion(id);
+  }
 
-  return (
-    questions.length === 0 ? <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
-      <div className="text-6xl"><MdOutlineQuestionAnswer/></div>
+  return questions.length === 0 ? (
+    <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
+      <div className="text-6xl">
+        <MdOutlineQuestionAnswer />
+      </div>
       <p>No questions yet...</p>
-    </div> :
+    </div>
+  ) : (
     questions.map((question, idx) => {
       return (
         <div key={question?.id as string}>
@@ -134,7 +149,7 @@ function Questions({ email }: { email: string }) {
                 <BiComment />
               </button>
               <button
-                onClick={() => deleteQuestion(question.id as string)}
+                onClick={() => deleteAction(question.id as string)}
                 className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
                 title="delete"
               >
@@ -143,23 +158,11 @@ function Questions({ email }: { email: string }) {
             </div>
           </div>
           {openStates[idx] && (
-            <>
-              <form
-                action={async (formdata) =>
-                  answerQuestion(question?.id as string, formdata)
-                }
-              >
-                <textarea name="answerText" className="w-full bg-transparent outline-none border border-gray-400"></textarea>
-                <div className="flex justify-end gap-2">
-                  <button type="button" onClick={() => toggleOpenState(idx)} className="px-4 py-1 bg-red-600 rounded">
-                    Cancel
-                  </button>
-                  <button type="submit" className="px-4 py-1 bg-green-600 rounded">
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </>
+            <AnswerForm
+              questionId={question?.id as string}
+              toggleOpenState={(arg: number) => toggleOpenState(arg)}
+              idx={idx}
+            />
           )}
         </div>
       );

@@ -1,29 +1,27 @@
 "use client";
 
-import { ClientSession } from "../auth/ClientSession";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getCreatorPageDetails , createQuestion} from "../actions/actions";
+import { getCreatorPageDetails } from "../actions/actions";
 import { UserProps, Username } from "./types";
 import Image from "next/image";
-
+import UserForm from "@/components/UserForm";
 
 const UserPage = () => {
   const params = useParams();
   const username: Username = params.username;
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserProps>({});
+  const [recipient, setRecipient] = useState<UserProps>({});
 
+  
   useEffect(() => {
     async function getUserData() {
-      const userDetails = await getCreatorPageDetails({ username });
-      // console.log(userDetails);
+      const recipentDetails = await getCreatorPageDetails({ username });
       
-      if (!userDetails) {
-
-          // notFound()
+      if (!recipentDetails) {
+        
       } else {
-        setUser(userDetails);
+        setRecipient(recipentDetails);
         setLoading(false);
       }
     };
@@ -36,18 +34,13 @@ const UserPage = () => {
       {loading ? <p>Loading...</p> : (
         <div className="bg-[#00000039] py-2 px-4 rounded my-2">
           <div className="flex gap-5 p-2 flex-col justify-center items-center">
-            <Image draggable={false} className="w-40 h-40 rounded-full" src={user?.profilePic as string} alt="user_profile" />
-            <p className="text-4xl font-bold">{user?.name}</p>  
+            <Image draggable={false} width={200} height={200} className="w-40 h-40 rounded-full" src={recipient?.profilePic as string} alt="user_profile" />
+            <p className="text-4xl font-bold">{recipient?.name}</p>  
           </div>
 
           <div className="flex justify-center items-center flex-col gap-5 ">
-            <p>Ask your question to {user?.name}</p>
-            <form action={async formData => await createQuestion(formData, user)}>
-              <textarea  placeholder={`Ask your question to ${user?.name}...`} className="rounded  min-h-48 max-h-48 outline-none p-2 bg-[#FFFFFF39] border-2 border-slate-900" name="question" cols={30} rows={5}></textarea> <br />
-              <button className="rounded w-full px-4 py-2 my-2  text-black bg-white duration-200" type="submit">
-                Ask your question
-              </button>
-            </form>
+            <p>Ask your question to {recipient?.name}</p>
+            <UserForm recipientId={recipient?.id as string} recipientName={recipient?.name as string}/>
           </div>
         </div>
       )}
