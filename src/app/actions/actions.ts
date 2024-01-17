@@ -16,9 +16,6 @@ export async function getCreatorPageDetails({
         username: username as string,
       },
     });
-
-    // const answers = await prisma.answer.findMany();
-
     return user;
   } catch (error) {
     console.log("Couldn't find user", error);
@@ -56,6 +53,9 @@ export async function createQuestion(newQuestion: unknown) {
 export async function getAllQuestionsByUser(email: string) {
   try {
     const questions: Question[] | null = await prisma.question.findMany({
+      include: {
+        answer: true,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -66,6 +66,7 @@ export async function getAllQuestionsByUser(email: string) {
         },
       },
     });
+    revalidatePath("/dashboard");
     return questions ?? [];
   } catch (error) {
     console.log("error getting questions", error);
@@ -113,7 +114,40 @@ export async function answerQuestion(newAnswer: unknown) {
     console.log("Error answering question", error);
     return {
       error: "Error answering question",
-    }
+    };
+  }
+}
+
+export async function updateAnswer(updatedAnswer: unknown) {
+  const result = AnswerSchema.safeParse(updatedAnswer);
+
+  if (!result.success) {
+    let errorMsg = "";
+    result.error.format();
+    result.error.issues.forEach((issue) => {
+      errorMsg = errorMsg + issue.path[0] + ": " + issue.message + ". ";
+    });
+
+    return {
+      error: errorMsg,
+    };
+  }
+  const { answer, questionId } = result.data;
+  try {
+    await prisma.answer.update({
+      where: {
+        questionId: questionId,
+      },
+      data: {
+        answer: answer,
+      },
+    });
+    revalidatePath("/dashboard");
+  } catch (error) {
+    console.log("Error updating question", error);
+    return {
+      error: "Error updating question",
+    };
   }
 }
 
@@ -124,7 +158,6 @@ export async function deleteQuestion(questionId: string) {
         id: questionId,
       },
     });
-    revalidatePath("/dashboard");
   } catch (error) {
     console.log("error deleting question", error);
   }

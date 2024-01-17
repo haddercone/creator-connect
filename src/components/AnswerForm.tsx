@@ -1,51 +1,73 @@
 "use client";
-import { useRef } from "react";
-import { answerQuestion } from "@/app/actions/actions";
+
+import { useRef, useState } from "react";
+import { answerQuestion, updateAnswer } from "@/app/actions/actions";
 import SubmitAnswerButton from "./SubmitAnswerButton";
-import { AnswerSchema } from "@/lib/types";
+import { Answer, AnswerSchema } from "@/lib/types";
 import toast from "react-hot-toast";
 
 type AnswerFormProps = {
-    toggleOpenState: (arg: number) => void;
-    idx: number;
-    questionId: string;
+  toggleOpenState: (arg: number) => void;
+  idx: number;
+  questionId: string;
+  answer: Answer | null;
 };
 
-const AnswerForm = ({ toggleOpenState, idx, questionId }: AnswerFormProps) => {
-    const ref = useRef<HTMLFormElement>(null);
+const AnswerForm = ({
+  toggleOpenState,
+  idx,
+  questionId,
+  answer,
+}: AnswerFormProps) => {
+  const ref = useRef<HTMLFormElement>(null);
+  const [answerText, setAnswerText] = useState<string>(answer?.answer ?? "");
+  const inputRef = useRef<string>(answerText);
 
-    async function answerAction(formData: FormData) {
-        const newAnswer = {
-            questionId: questionId,
-            answer : formData.get("answerText")
-        }
+  async function answerAction(formData: FormData) {
+    const newAnswer = {
+      questionId: questionId,
+      answer: answerText,
+    };
 
-        const result = AnswerSchema.safeParse(newAnswer)
+    const result = AnswerSchema.safeParse(newAnswer);
 
-        if(!result.success) {
-            let errorMsg = "";
-            result.error.format();
-            result.error.issues.forEach((issue) => {
-                errorMsg = errorMsg + issue.path[0] + ": " + issue.message + ". ";
-            });
+    if (!result.success) {
+      let errorMsg = "";
+      result.error.format();
+      result.error.issues.forEach((issue) => {
+        errorMsg = errorMsg + issue.path[0] + ": " + issue.message + ". ";
+      });
 
-            toast.error(errorMsg);
-            return;
-        }
-
-        const response = await answerQuestion(result.data)
-        if(response?.error) {
-            toast.error(response.error)
-            return;
-        }
-        ref.current?.reset()
-        toast.success("Answer Submitted successfully!")
-        toggleOpenState(idx)
+      toast.error(errorMsg);
+      return;
+    }
+    // if question is new and there is no answer e.g answer is an empty string create a new answer
+    if (inputRef.current === "") {
+      const response = await answerQuestion(result.data);
+      if (response?.error) {
+        toast.error(response.error);
+        return;
+      }
+      toast.success("Answer Submitted successfully!");
+    } else {
+      // if there is a previous answer update the answer
+      const updateResponse = await updateAnswer(result.data);
+      if (updateResponse?.error) {
+        toast.error(updateResponse.error);
+        return;
+      }
+      toast.success("Answer Updated successfully!");
     }
 
+    ref.current?.reset();
+    toggleOpenState(idx);
+  }
+
   return (
-    <form  ref={ref} action={answerAction}>
+    <form ref={ref} action={answerAction}>
       <textarea
+        value={answerText}
+        onChange={(e) => setAnswerText(e.target.value)}
         name="answerText"
         className="w-full resize-none max-h-20 min-h-20 outline-none border border-transparent py-1 px-2 bg-[#F1F1F11F] rounded"
         required

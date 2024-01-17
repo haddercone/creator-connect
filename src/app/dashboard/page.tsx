@@ -2,22 +2,14 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
-import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
-import { BiComment } from "react-icons/bi";
 import LogoutButton from "@/components/LogoutButton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useClientSession } from "@/hooks/useClientSession";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { signOut } from "next-auth/react";
-import {
-  getAllQuestionsByUser,
-  answerQuestion,
-  deleteQuestion,
-} from "../actions/actions";
 import DashBoardSkeleton from "@/components/DashBoardSkeleton";
-import { Question } from "./types";
-import AnswerForm from "@/components/AnswerForm";
+import Questions from "@/components/Questions";
 
 const DashBoard = () => {
   const session = useClientSession();
@@ -102,72 +94,5 @@ const DashBoard = () => {
     )
   );
 };
-
-function Questions({ email }: { email: string }) {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [openStates, setOpenStates] = useState<boolean[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const questions = await getAllQuestionsByUser(email);
-      setQuestions(questions as Question[]);
-      setOpenStates(new Array(questions?.length).fill(false));
-    })();
-  }, []);
-
-  const toggleOpenState = (index: number) => {
-    const newOpenStates = [...openStates];
-    newOpenStates[index] = !newOpenStates[index];
-    setOpenStates(newOpenStates);
-  };
-  
-  async function deleteAction(id: string) {
-    const newQuestions = questions.filter((question) => question.id !== id);
-    setQuestions(newQuestions);
-    await deleteQuestion(id);
-  }
-
-  return questions.length === 0 ? (
-    <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
-      <div className="text-6xl">
-        <MdOutlineQuestionAnswer />
-      </div>
-      <p>No questions yet...</p>
-    </div>
-  ) : (
-    questions.map((question, idx) => {
-      return (
-        <div key={question?.id as string}>
-          <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">
-            <p>{question?.questionText}</p>
-            <div className=" flex justify-between gap-4">
-              <button
-                onClick={() => toggleOpenState(idx)}
-                className="text-green-700 p-2 rounded hover:bg-[#F1F1F11F]"
-                title="answer"
-              >
-                <BiComment />
-              </button>
-              <button
-                onClick={() => deleteAction(question.id as string)}
-                className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
-                title="delete"
-              >
-                <MdDelete />
-              </button>
-            </div>
-          </div>
-          {openStates[idx] && (
-            <AnswerForm
-              questionId={question?.id as string}
-              toggleOpenState={(arg: number) => toggleOpenState(arg)}
-              idx={idx}
-            />
-          )}
-        </div>
-      );
-    })
-  );
-}
 
 export default DashBoard;
