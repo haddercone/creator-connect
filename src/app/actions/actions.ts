@@ -160,5 +160,8 @@ export async function deleteQuestion(questionId: string) {
     });
   } catch (error) {
     console.log("error deleting question", error);
+    return {
+      error: "Error deleting question",
+    }
   }
 }

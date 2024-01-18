@@ -6,16 +6,19 @@ import { BiComment } from "react-icons/bi";
 import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import AnswerForm from "./AnswerForm";
 import { Answer } from "@/lib/types";
+import toast from "react-hot-toast";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [openStates, setOpenStates] = useState<boolean[]>([]);
+  const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const questions = await getAllQuestionsByUser(email);
       setQuestions(questions as Question[]);
       setOpenStates(new Array(questions?.length).fill(false));
+      setLoadQuestions(false);
     })();
   }, []);
 
@@ -26,9 +29,19 @@ function Questions({ email }: { email: string }) {
   };
 
   async function deleteAction(id: string) {
+    const response = await deleteQuestion(id);
+    if(response?.error) {
+      toast.error(response.error)
+      return;
+    }
     const newQuestions = questions.filter((question) => question.id !== id);
     setQuestions(newQuestions);
-    await deleteQuestion(id);
+    toast.success("Question deleted successfully");
+
+  }
+
+  if(loadQuestions) {
+    return <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">Loading...</div>
   }
 
   return questions.length === 0 ? (

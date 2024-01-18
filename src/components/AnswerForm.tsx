@@ -19,9 +19,9 @@ const AnswerForm = ({
   questionId,
   answer,
 }: AnswerFormProps) => {
-  const ref = useRef<HTMLFormElement>(null);
+  // const ref = useRef<HTMLFormElement>(null);
   const [answerText, setAnswerText] = useState<string>(answer?.answer ?? "");
-  const inputRef = useRef<string>(answerText);
+  const inputRef = useRef<string>(answerText); // to keep track of prevoius answer text
 
   async function answerAction(formData: FormData) {
     const newAnswer = {
@@ -59,12 +59,13 @@ const AnswerForm = ({
       toast.success("Answer Updated successfully!");
     }
 
-    ref.current?.reset();
+    // ref.current?.reset();
+    
     toggleOpenState(idx);
   }
 
   return (
-    <form ref={ref} action={answerAction}>
+    <form action={answerAction}>
       <textarea
         value={answerText}
         onChange={(e) => setAnswerText(e.target.value)}
