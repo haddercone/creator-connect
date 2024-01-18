@@ -32,7 +32,7 @@ export const authOptions : NextAuthOptions = {
         }),
     ],
     callbacks: {
-      async signIn({account, user, profile} : any) {
+      async signIn({account, user, profile}:any) {
         try {
 
           const authProviders: String[] = ["github", "twitter"];
@@ -82,18 +82,21 @@ export const authOptions : NextAuthOptions = {
           return false;
         }
       },
-        async jwt({ token, account }) {
+        async jwt({ token, account, profile }: any) {
           if (account) {         
             token.accessToken  = account.oauth_token || account.access_token;
             token.refreshToken = account.oauth_token_secret;
+            token.userName = profile?.screen_name || profile?.login;
           }
-
+          console.log(profile);
+          
           return token;
         },
 
         async session({session, token }: any){
             session.accessToken = token?.accessToken
             session.refreshToken = token?.refreshToken
+            session.user.username = token.userName
             session.user.id = token.sub
             // console.log("User session: " , session);
             

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
+import { MdOutlineInsertLink } from "react-icons/md";
 import LogoutButton from "@/components/LogoutButton";
 import React, { useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -10,12 +11,13 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { signOut } from "next-auth/react";
 import DashBoardSkeleton from "@/components/DashBoardSkeleton";
 import Questions from "@/components/Questions";
+import Link from "next/link";
 
 const DashBoard = () => {
   const session = useClientSession();
   const [open, setOpen] = useState(false);
   const { data, status } = session;
-
+  
   function handleMenuClick() {
     setOpen(!open);
   }
@@ -67,9 +69,10 @@ const DashBoard = () => {
           </nav>
         </div>
         <div className="p-4">
-          <p className="text-2xl bg-slate-950 rounded p-2">
-            {data?.user.name}&apos;s dashboard
-          </p>
+          <div className=" bg-slate-950 rounded p-2">
+            <p className="text-2xl">{data?.user.name}&apos;s dashboard</p>
+            <Link target="_blank" className="text-slate-400 flex justify-start hover:underline items-center gap-2" href={data.user?.username}>your question card <MdOutlineInsertLink/></Link>
+          </div>
           <div className="flex  flex-col sm:flex-row gap-4 min-h-full my-4">
             <div className="w-full sm:w-1/5 flex  flex-col  rounded ">
               <button className="flex items-center justify-between p-2 bg-slate-950 w-full rounded-t  py-2">
