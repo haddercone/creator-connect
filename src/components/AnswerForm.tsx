@@ -68,12 +68,13 @@ const AnswerForm = ({
     <form action={answerAction}>
       <textarea
         value={answerText}
+        placeholder="Your answer here..."
         onChange={(e) => setAnswerText(e.target.value)}
         name="answerText"
         className="w-full resize-none max-h-20 min-h-20 outline-none border border-transparent py-1 px-2 bg-[#F1F1F11F] rounded"
         required
       ></textarea>
-      <div className="flex justify-end gap-2">
+      <div className="flex mt-2 justify-end gap-2">
         <button
           type="button"
           onClick={() => toggleOpenState(idx)}

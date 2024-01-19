@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getCreatorPageDetails } from "../actions/actions";
 import { UserProps, Username } from "./types";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import UserForm from "@/components/UserForm";
 
 const UserPage = () => {
   const params = useParams();
+  const router = useRouter();
   const username: Username = params.username;
   const [loading, setLoading] = useState(true);
   const [recipient, setRecipient] = useState<UserProps>({});
@@ -19,7 +20,7 @@ const UserPage = () => {
       const recipentDetails = await getCreatorPageDetails({ username });
       
       if (!recipentDetails) {
-        
+        router.replace("/not-found")
       } else {
         setRecipient(recipentDetails);
         setLoading(false);

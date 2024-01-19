@@ -88,7 +88,6 @@ export const authOptions : NextAuthOptions = {
             token.refreshToken = account.oauth_token_secret;
             token.userName = profile?.screen_name || profile?.login;
           }
-          console.log(profile);
           
           return token;
         },

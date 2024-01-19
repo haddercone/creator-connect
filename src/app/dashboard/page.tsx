@@ -69,7 +69,7 @@ const DashBoard = () => {
           </nav>
         </div>
         <div className="p-4">
-          <div className=" bg-slate-950 rounded p-2">
+          <div className="flex gap-2 flex-wrap bg-slate-950 rounded p-2">
             <p className="text-2xl">{data?.user.name}&apos;s dashboard</p>
             <Link target="_blank" className="text-slate-400 flex justify-start hover:underline items-center gap-2" href={data.user?.username}>your question card <MdOutlineInsertLink/></Link>
           </div>
