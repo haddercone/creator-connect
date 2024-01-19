@@ -65,7 +65,7 @@ const UserPage = () => {
           </div>
         )}
         {loading ? null : (
-          <div className="py-2">
+          <div className="py-2 md:w-1/2">
             <p className="px-4 text-2xl">
               Questions answered by{" "}
               <span className="font-bold">{recipient?.name}</span>
