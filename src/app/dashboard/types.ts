@@ -5,6 +5,7 @@ export type Question =  {
   questionText?: string,
   isAnswered?: boolean,
   isDeleted?: boolean,
+  createdAt?: Date,
   recipientId?: string,
   answer?: Answer | null,
 };

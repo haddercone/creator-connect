@@ -5,11 +5,7 @@ import { Question } from "../dashboard/types";
 import { revalidatePath } from "next/cache";
 import { AnswerSchema, QuestionSchema } from "@/lib/types";
 
-export async function getCreatorPageDetails({
-  username,
-}: {
-  username: string | string[];
-}) {
+export async function getCreatorPageDetails(username : string) {
   try {
     const user = await prisma.user.findFirst({
       where: {
@@ -47,6 +43,30 @@ export async function createQuestion(newQuestion: unknown) {
     });
   } catch (error) {
     console.log("error creating question", error);
+  }
+}
+
+export async function getAnsweredQuestionsByUsername(username: string) {
+  try {
+    const answeredQuestions = await prisma.question.findMany({
+      include: {
+        answer: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      where: {
+        isAnswered: true,
+      }
+    })
+
+    return answeredQuestions;
+  } catch (error) {
+    return {
+      error: "Error getting questions for username"
+    }
+    console.log("Error getting questions", error);
+    
   }
 }
 

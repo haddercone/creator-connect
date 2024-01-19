@@ -30,18 +30,21 @@ function Questions({ email }: { email: string }) {
 
   async function deleteAction(id: string) {
     const response = await deleteQuestion(id);
-    if(response?.error) {
-      toast.error(response.error)
+    if (response?.error) {
+      toast.error(response.error);
       return;
     }
     const newQuestions = questions.filter((question) => question.id !== id);
     setQuestions(newQuestions);
     toast.success("Question deleted successfully");
-
   }
 
-  if(loadQuestions) {
-    return <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">Loading...</div>
+  if (loadQuestions) {
+    return (
+      <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">
+        Loading...
+      </div>
+    );
   }
 
   return questions.length === 0 ? (
@@ -77,7 +80,7 @@ function Questions({ email }: { email: string }) {
           </div>
           {openStates[idx] && (
             <AnswerForm
-              answer = {question.answer as Answer}
+              answer={question.answer as Answer}
               questionId={question?.id as string}
               toggleOpenState={(arg: number) => toggleOpenState(arg)}
               idx={idx}
