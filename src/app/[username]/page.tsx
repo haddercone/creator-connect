@@ -87,7 +87,9 @@ const UserPage = () => {
                   );
                 })
               ) : (
-                <p>No Questions answered yet</p>
+                <div className="bg-[#F1F1F11F] lg:text-2xl p-2 flex justify-center text-center items-center min-h-[50vh] rounded text-slate-400">
+                  <p>No Questions answered yet...</p>
+                </div>
               )}
             </div>
           </div>

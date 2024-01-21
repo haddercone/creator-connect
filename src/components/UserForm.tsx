@@ -46,7 +46,7 @@ const UserForm = ({
     <form ref={ref} action={clientAction}>
       <textarea
         placeholder={`Ask your question to ${recipientName}...`}
-        className="rounded resize-none  min-h-48 max-h-48 outline-none p-2 bg-[#FFFFFF39] border-2 border-slate-900"
+        className="rounded resize-none  min-h-48 max-h-48 outline-none p-2 bg-[#F1F1F11F] border-2 border-slate-900"
         name="question"
         cols={30}
         rows={5}
