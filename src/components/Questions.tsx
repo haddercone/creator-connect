@@ -8,6 +8,7 @@ import AnswerForm from "./AnswerForm";
 import { Answer } from "@/lib/types";
 import toast from "react-hot-toast";
 import useToggleQuestionOpenState from "@/hooks/useToggleQuestionOpenState";
+import QuestionsSkeleton from "./QuestionsSkeleton";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -36,9 +37,10 @@ function Questions({ email }: { email: string }) {
 
   if (loadQuestions) {
     return (
-      <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">
-        Loading...
-      </div>
+      <QuestionsSkeleton />
+      // <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">
+      //   Loading...
+      // </div>
     );
   }
 
