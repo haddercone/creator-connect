@@ -11,7 +11,6 @@ import useToggleQuestionOpenState from "@/hooks/useToggleQuestionOpenState";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
-  // const [openStates, setOpenStates] = useState<boolean[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
   const {OpenStates, toggleOpenState, setOpenStates} = useToggleQuestionOpenState()
 
