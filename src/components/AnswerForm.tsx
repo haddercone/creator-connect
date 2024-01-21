@@ -1,31 +1,43 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { answerQuestion, updateAnswer } from "@/app/actions/actions";
 import SubmitAnswerButton from "./SubmitAnswerButton";
 import { Answer, AnswerSchema } from "@/lib/types";
 import toast from "react-hot-toast";
+import { Question } from "@/app/dashboard/types";
 
 type AnswerFormProps = {
   toggleOpenState: (arg: number) => void;
   idx: number;
-  questionId: string;
-  answer: Answer | null;
+  question: Question;
+  questions: Question[];
+  setQuestions: Dispatch<SetStateAction<Question[]>>;
 };
 
 const AnswerForm = ({
   toggleOpenState,
   idx,
-  questionId,
-  answer,
+  question,
+  questions,
+  setQuestions,
 }: AnswerFormProps) => {
-  // const ref = useRef<HTMLFormElement>(null);
-  const [answerText, setAnswerText] = useState<string>(answer?.answer ?? "");
-  const inputRef = useRef<string>(answerText); // to keep track of prevoius answer text
+  const [answerText, setAnswerText] = useState<string>(
+    question.answer?.answer ?? ""
+  );
+  const inputRef = useRef<string>(answerText); // to keep track of initial answer text
+  const [questionState, setQuestionState] = useState<Question>(question);
+
+  useEffect(() => {
+    setQuestionState((prev) => ({
+      ...prev,
+      answer: { ...(prev.answer as Answer), answer: answerText },
+    }));
+  }, [answerText]);
 
   async function answerAction(formData: FormData) {
     const newAnswer = {
-      questionId: questionId,
+      questionId: question.id,
       answer: answerText,
     };
 
@@ -41,6 +53,12 @@ const AnswerForm = ({
       toast.error(errorMsg);
       return;
     }
+    // if the answer was not changed and the user tries to submit the same answer again
+    if(inputRef.current === answerText) {
+      toast.error("Please update answer before Submission")
+      return;
+    }
+    
     // if question is new and there is no answer e.g answer is an empty string create a new answer
     if (inputRef.current === "") {
       const response = await answerQuestion(result.data);
@@ -59,8 +77,12 @@ const AnswerForm = ({
       toast.success("Answer Updated successfully!");
     }
 
-    // ref.current?.reset();
-    
+    const updatedQuestions = questions.map((question) =>
+      question.id === questionState.id ? questionState : question
+    );
+
+    setQuestions(updatedQuestions);
+
     toggleOpenState(idx);
   }
 

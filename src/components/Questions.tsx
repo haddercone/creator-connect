@@ -7,13 +7,15 @@ import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import AnswerForm from "./AnswerForm";
 import { Answer } from "@/lib/types";
 import toast from "react-hot-toast";
+import useToggleQuestionOpenState from "@/hooks/useToggleQuestionOpenState";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [openStates, setOpenStates] = useState<boolean[]>([]);
+  // const [openStates, setOpenStates] = useState<boolean[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
+  const {OpenStates, toggleOpenState, setOpenStates} = useToggleQuestionOpenState()
 
-  useEffect(() => {
+  useEffect(() => {    
     (async () => {
       const questions = await getAllQuestionsByUser(email);
       setQuestions(questions as Question[]);
@@ -21,12 +23,6 @@ function Questions({ email }: { email: string }) {
       setLoadQuestions(false);
     })();
   }, []);
-
-  const toggleOpenState = (index: number) => {
-    const newOpenStates = [...openStates];
-    newOpenStates[index] = !newOpenStates[index];
-    setOpenStates(newOpenStates);
-  };
 
   async function deleteAction(id: string) {
     const response = await deleteQuestion(id);
@@ -78,10 +74,11 @@ function Questions({ email }: { email: string }) {
               </button>
             </div>
           </div>
-          {openStates[idx] && (
+          {OpenStates[idx] && (
             <AnswerForm
-              answer={question.answer as Answer}
-              questionId={question?.id as string}
+              question={question}
+              questions={questions}
+              setQuestions={setQuestions}
               toggleOpenState={(arg: number) => toggleOpenState(arg)}
               idx={idx}
             />
