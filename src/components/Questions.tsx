@@ -7,7 +7,7 @@ import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import AnswerForm from "./AnswerForm";
 import { Answer } from "@/lib/types";
 import toast from "react-hot-toast";
-import useToggleQuestionOpenState from "@/hooks/useToggleQuestionOpenState";
+import {useToggleQuestionOpenState} from "@/hooks/useToggleQuestionOpenState";
 import QuestionsSkeleton from "./QuestionsSkeleton";
 
 function Questions({ email }: { email: string }) {

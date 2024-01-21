@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const useToggleQuestionOpenState = () => {
+export const  useToggleQuestionOpenState = () => {
     const [OpenStates, setOpenStates] = useState<boolean[]>([]);
 
     const toggleOpenState = (index: number) => {
@@ -12,5 +12,3 @@ const useToggleQuestionOpenState = () => {
     return {toggleOpenState, setOpenStates, OpenStates};
   
 }
-
-export default useToggleQuestionOpenState;

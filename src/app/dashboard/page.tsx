@@ -3,14 +3,11 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { CiMenuBurger } from "react-icons/ci";
 import { MdOutlineInsertLink } from "react-icons/md";
-import LogoutButton from "@/components/LogoutButton";
+import {LogoutButton, DashBoardSkeleton, Questions} from "@/components/index"
 import React, { useState } from "react";
-import { useClickOutside } from "@/hooks/useClickOutside";
-import { useClientSession } from "@/hooks/useClientSession";
+import { useClickOutside, useClientSession } from "@/hooks/index";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { signOut } from "next-auth/react";
-import DashBoardSkeleton from "@/components/DashBoardSkeleton";
-import Questions from "@/components/Questions";
 import Link from "next/link";
 
 const DashBoard = () => {
