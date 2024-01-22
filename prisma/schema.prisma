@@ -28,7 +28,7 @@ model User {
   email       String        @unique
   username    String        @unique
   name        String
-  profilePic  String?
+  profilePic  String
   questions   Question[]
   
 }

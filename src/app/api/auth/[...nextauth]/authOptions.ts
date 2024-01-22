@@ -4,15 +4,35 @@ import Twitter from "next-auth/providers/twitter";
 import { NextAuthOptions } from "next-auth";
 import { prisma } from "@/server/db/PrismaClientSingleton";
 
-function getUpdatedFields(existingUser:any, newUser:any) {
-  const updatedFields : any = {};
+type User = {
+  id?: string;
+  username: string;
+  name: string;
+  email: string;
+  profilePic: string;
+};
+
+function getUpdatedFields<T extends User>(
+  existingUser: User,
+  newUser: T
+): Partial<T> | null {
+  const updatedFields: Partial<T> = {};
   for (const [key, value] of Object.entries(newUser)) {
-      if (existingUser.hasOwnProperty(key) && existingUser[key] !== value) {
-          updatedFields[key] = value;
-      }
+    if (existingUser.hasOwnProperty(key) && existingUser[key as keyof User] !== value) {
+      updatedFields[key as keyof T] = value as T[keyof T];
+    }
   }
   return Object.keys(updatedFields).length > 0 ? updatedFields : null;
 }
+// function getUpdatedFields(existingUser:any, newUser:any) {
+//   const updatedFields : any = {};
+//   for (const [key, value] of Object.entries(newUser)) {
+//       if (existingUser.hasOwnProperty(key) && existingUser[key] !== value) {
+//           updatedFields[key] = value;
+//       }
+//   }
+//   return Object.keys(updatedFields).length > 0 ? updatedFields : null;
+// }
 
 
 export const authOptions : NextAuthOptions = {
@@ -61,7 +81,8 @@ export const authOptions : NextAuthOptions = {
 
           if(existingUser)  {
             const updatedFields = getUpdatedFields(existingUser, inCommingUserObject)
-
+            // console.log(updatedFields);
+            
             if(!updatedFields) return true;
 
             await prisma.user.update({
@@ -84,8 +105,8 @@ export const authOptions : NextAuthOptions = {
       },
         async jwt({ token, account, profile }: any) {
           if (account) {         
-            token.accessToken  = account.oauth_token || account.access_token;
-            token.refreshToken = account.oauth_token_secret;
+            // token.accessToken  = account.oauth_token || account.access_token;
+            // token.refreshToken = account.oauth_token_secret;
             token.userName = profile?.screen_name || profile?.login;
           }
           
@@ -93,8 +114,8 @@ export const authOptions : NextAuthOptions = {
         },
 
         async session({session, token }: any){
-            session.accessToken = token?.accessToken
-            session.refreshToken = token?.refreshToken
+            // session.accessToken = token?.accessToken
+            // session.refreshToken = token?.refreshToken
             session.user.username = token.userName
             session.user.id = token.sub
             // console.log("User session: " , session);
