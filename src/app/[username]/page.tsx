@@ -2,14 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import {
-  getAnsweredQuestionsByUsername,
-  getCreatorPageDetails,
-} from "../actions/actions";
 import { UserProps, Username } from "./types";
 import Image from "next/image";
 import UserForm from "@/components/UserForm";
 import { Question } from "../dashboard/types";
+import toast from "react-hot-toast";
 
 const UserPage = () => {
   const params = useParams();
@@ -21,16 +18,31 @@ const UserPage = () => {
 
   useEffect(() => {
     async function getUserData() {
-      const recipentDetails = await getCreatorPageDetails(username as string);
-      const answeredQuestions = await getAnsweredQuestionsByUsername(
-        username as string
-      );
-      if (!recipentDetails) {
-        router.replace("/not-found");
-      } else {
+      try {
+        const [creatoDetailsResponse, answeredQuestionsResponse] = await Promise.all([
+          fetch(`/api/creator-details?username=${username}`),
+          fetch(`/api/answered-questions?username=${username}`)
+        ]);
+    
+        if (!creatoDetailsResponse.ok || !answeredQuestionsResponse.ok) {
+          router.replace("/not-found");
+          return;
+        }
+
+        const recipentDetails = await creatoDetailsResponse.json();
+        const answeredQuestions = await answeredQuestionsResponse.json();
+
+        if(!recipentDetails){
+          router.replace("/not-found");
+          return;
+        }
+
         setRecipient(recipentDetails);
-        setAnsweredQuestions(answeredQuestions as Question[]);
+        setAnsweredQuestions(answeredQuestions);
         setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Error fetching data")
       }
     }
     getUserData();
@@ -71,7 +83,7 @@ const UserPage = () => {
               <span className="font-bold">{recipient?.name}</span>
             </p>
             <div className="flex px-4 mt-4  gap-5 flex-col">
-              {answeredQuestions.length > 0 ? (
+              {answeredQuestions && answeredQuestions.length > 0 ? (
                 answeredQuestions.map((answeredQuestion) => {
                   return (
                     answeredQuestion.isAnswered && (
