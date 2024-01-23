@@ -1,0 +1,2 @@
+export const RATE_LIMIT_VALUE_SECONDS = 60
+export const ALLOWED_REQUESTS  = 2
