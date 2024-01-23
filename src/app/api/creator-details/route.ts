@@ -9,6 +9,12 @@ export async function GET(req: NextRequest) {
       where: {
         username: username as string,
       },
+      select: {
+        profilePic: true,
+        name: true,
+        id: true,
+        username: true,
+      }
     });
     return NextResponse.json(user);
   } catch (error) {

@@ -56,9 +56,7 @@ export const authOptions : NextAuthOptions = {
         try {
 
           const authProviders: String[] = ["github", "twitter"];
-          // console.log("Profile", profile);
-          // console.log("User", user);
-          // console.log("Account", account);
+
 
           const inCommingUserObject = {
               username: (profile?.screen_name || profile?.login) as string,
@@ -118,7 +116,7 @@ export const authOptions : NextAuthOptions = {
             // session.refreshToken = token?.refreshToken
             session.user.username = token.userName
             session.user.id = token.sub
-            // console.log("User session: " , session);
+
             
             return session
         }
