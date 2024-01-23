@@ -22,14 +22,16 @@ export async function createQuestion(newQuestion: unknown) {
   const { question, recipientId } = result.data;
 
   try {
-    await prisma.question.create({
+    const result: Question = await prisma.question.create({
       data: {
         questionText: question as string,
         recipientId: recipientId as string,
       },
     });
+    return result;
   } catch (error) {
-    console.log("error creating question", error);
+    console.log("Error creating question", error);
+    return { error: "Error creating question" };
   }
 }
 
@@ -52,7 +54,8 @@ export async function getAllQuestionsByUser(email: string) {
     revalidatePath("/dashboard");
     return questions ?? [];
   } catch (error) {
-    console.log("error getting questions", error);
+    console.log("Error getting questions", error);
+    return { error: "Error getting questions" };
   }
 }
 
@@ -142,9 +145,9 @@ export async function deleteQuestion(questionId: string) {
       },
     });
   } catch (error) {
-    console.log("error deleting question", error);
+    console.log("Error deleting question", error);
     return {
       error: "Error deleting question",
-    }
+    };
   }
 }
