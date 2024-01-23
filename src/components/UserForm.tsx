@@ -3,10 +3,11 @@
 import { createQuestion } from "@/app/actions/actions";
 import FormSubmitButton from "./FormSubmitButton";
 import { CiCircleInfo } from "react-icons/ci";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QuestionSchema } from "@/lib/types";
 import toast from "react-hot-toast";
-import { ALLOWED_REQUESTS, RATE_LIMIT_VALUE_SECONDS } from "@/config/rateLimit";
+import { ALLOWED_REQUESTS, RATE_LIMIT_VALUE } from "@/config/rateLimit";
+import { getNextAllowedQuestionTimeStamp } from "@/lib/helpers";
 
 const UserForm = ({
   recipientId,
@@ -17,42 +18,14 @@ const UserForm = ({
 }) => {
   const ref = useRef<HTMLFormElement>(null);
   const [responseData, setResponseData] = useState({});
+  const [timeStamp, setTimestamp] = useState("");
 
   useEffect(() => {
-    let timeId: NodeJS.Timeout;
-    if (responseData === undefined && !localStorage.getItem("lastErrorTimeStamp")) {
-      
-      localStorage.setItem("lastErrorTimeStamp", Date.now().toString());
-
-      timeId = setTimeout(() => {
-        localStorage.removeItem("lastErrorTimeStamp");
-      }, RATE_LIMIT_VALUE_SECONDS * 60 * 1000);
+    if (responseData === undefined) {
+      const timeStamp = getNextAllowedQuestionTimeStamp(RATE_LIMIT_VALUE);
+      setTimestamp(timeStamp);
     }
-
-    return () => clearTimeout(timeId);
   }, [responseData]);
-
-  const getTimeDifferences = useCallback(
-    (currentTimeStamp: number, lastErrorTimeStamp: number) => {
-      const standardDifference = Math.floor(
-        (RATE_LIMIT_VALUE_SECONDS * 60) / 60
-      );
-
-      if (lastErrorTimeStamp === 0) {
-        return standardDifference;
-      }
-
-      const timeDifference =
-        standardDifference -
-        Math.max(
-          0,
-          Math.ceil((currentTimeStamp - lastErrorTimeStamp) / (1000 * 60))
-        );
-
-      return timeDifference;
-    },
-    []
-  );
 
   async function clientAction(formData: FormData) {
     const newQuestion = {
@@ -72,17 +45,13 @@ const UserForm = ({
     }
 
     const response = await createQuestion(result.data);
-    
+
     setResponseData(response);
 
     if (response === undefined) {
-      const currenTimeStamp = Date.now();
-      const lastErrorTimeStamp = Number(localStorage.getItem("lastErrorTimeStamp"));
-      const timeDiff = getTimeDifferences(currenTimeStamp, lastErrorTimeStamp);
       toast.error(
-        `Your question limit exceeded. Try again after ${timeDiff} minutes.`
+        `Your question limit exceeded. Try again after ${timeStamp}.`
       );
-
       ref?.current?.reset();
       return;
     }
@@ -112,7 +81,8 @@ const UserForm = ({
           <CiCircleInfo />
         </span>
         <span className="text-xs">
-          Please note you can only ask {ALLOWED_REQUESTS} questions/hr,to prevent spamming.{" "}
+          Please note you can only ask {ALLOWED_REQUESTS} questions/hr,to
+          prevent spamming.{" "}
         </span>
       </div>
     </form>
