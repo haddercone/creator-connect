@@ -54,8 +54,8 @@ const UserPage = () => {
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <div className="bg-[#00000039] py-2 px-4 rounded my-2">
-            <div className="flex gap-5 p-2 flex-col justify-center items-center">
+          <div className="bg-[#00000039] lg:w-1/3 md:w-1/2 p-4 rounded">
+            <div className="flex gap-5 flex-col justify-center items-center">
               <Image
                 draggable={false}
                 width={200}
@@ -77,13 +77,13 @@ const UserPage = () => {
           </div>
         )}
         {loading ? null : (
-          <div className="py-2 md:w-1/2">
-            <p className="px-4 text-2xl">
+          <div className="md:w-1/2 bg-[#00000039] rounded">
+            <p className="px-4 text-2xl bg-slate-600 py-2 rounded-t-sm">
               Questions answered by{" "}
               <span className="font-bold">{recipient?.name}</span>
             </p>
-            <div className="flex px-4 mt-4  gap-5 flex-col">
-              {answeredQuestions && answeredQuestions.length > 0 ? (
+            <div className="flex px-4 mt-4  gap-5 flex-col pb-4">
+              {answeredQuestions.length > 0 ? (
                 answeredQuestions.map((answeredQuestion) => {
                   return (
                     answeredQuestion.isAnswered && (
