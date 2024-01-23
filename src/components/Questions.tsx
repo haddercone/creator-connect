@@ -17,7 +17,7 @@ function Questions({ email }: { email: string }) {
 
   useEffect(() => {    
     (async () => {
-      const questions = await getAllQuestionsByUser(email);
+      const questions  = await getAllQuestionsByUser(email);
       setQuestions(questions as Question[]);
       setOpenStates(new Array(questions?.length).fill(false));
       setLoadQuestions(false);

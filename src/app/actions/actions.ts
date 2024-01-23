@@ -55,7 +55,7 @@ export async function getAllQuestionsByUser(email: string) {
     return questions ?? [];
   } catch (error) {
     console.log("Error getting questions", error);
-    return { error: "Error getting questions" };
+    // return { error: "Error getting questions" };
   }
 }
 
