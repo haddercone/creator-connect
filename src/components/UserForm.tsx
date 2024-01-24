@@ -3,11 +3,11 @@
 import { createQuestion } from "@/app/actions/actions";
 import FormSubmitButton from "./FormSubmitButton";
 import { CiCircleInfo } from "react-icons/ci";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { QuestionSchema } from "@/lib/types";
 import toast from "react-hot-toast";
-import { ALLOWED_REQUESTS, RATE_LIMIT_VALUE } from "@/config/rateLimit";
-import { getNextAllowedQuestionTimeStamp } from "@/lib/helpers";
+import { ALLOWED_REQUESTS } from "@/config/rateLimit";
+import { getLastSuccessfullQuestionsTimeStamp } from "@/lib/helpers";
 
 const UserForm = ({
   recipientId,
@@ -17,15 +17,9 @@ const UserForm = ({
   recipientName: string;
 }) => {
   const ref = useRef<HTMLFormElement>(null);
-  const [responseData, setResponseData] = useState({});
-  const [timeStamp, setTimestamp] = useState("");
-
-  useEffect(() => {
-    if (responseData === undefined) {
-      const timeStamp = getNextAllowedQuestionTimeStamp(RATE_LIMIT_VALUE);
-      setTimestamp(timeStamp);
-    }
-  }, [responseData]);
+  const [timeStamp, setTimeStamp] = useState(
+    localStorage.getItem("timeStamp") ?? ""
+  );
 
   async function clientAction(formData: FormData) {
     const newQuestion = {
@@ -46,11 +40,9 @@ const UserForm = ({
 
     const response = await createQuestion(result.data);
 
-    setResponseData(response);
-
     if (response === undefined) {
       toast.error(
-        `Your question limit exceeded. Try again after ${timeStamp}.`
+        `Your question limit of 2 questions/hr exceeded. Try again after some time.`
       );
       ref?.current?.reset();
       return;
@@ -60,6 +52,10 @@ const UserForm = ({
       toast.error((response as { error: string })?.error);
       return;
     }
+    const timestamp = getLastSuccessfullQuestionsTimeStamp();
+    localStorage.setItem("timeStamp", timestamp);
+    setTimeStamp(timestamp);
+
     ref?.current?.reset();
     toast.success("Question sent successfully!");
   }
@@ -76,12 +72,15 @@ const UserForm = ({
       ></textarea>{" "}
       <br />
       <FormSubmitButton />
+      {timeStamp && (
+        <p className="text-sm">Last questions asked at {timeStamp}</p>
+      )}
       <div className="bg-blue-700 py-2 px-4 flex justify-start items-center gap-2 rounded my-2">
         <span className="text-xl">
           <CiCircleInfo />
         </span>
         <span className="text-xs">
-          Please note you can only ask {ALLOWED_REQUESTS} questions/hr,to
+          Please note you can only ask {ALLOWED_REQUESTS - 1} questions/hr,to
           prevent spamming.{" "}
         </span>
       </div>
