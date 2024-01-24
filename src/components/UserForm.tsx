@@ -6,7 +6,6 @@ import { CiCircleInfo } from "react-icons/ci";
 import { useRef, useState } from "react";
 import { QuestionSchema } from "@/lib/types";
 import toast from "react-hot-toast";
-import { ALLOWED_REQUESTS } from "@/config/rateLimit";
 import { getLastSuccessfullQuestionsTimeStamp } from "@/lib/helpers";
 
 const UserForm = ({

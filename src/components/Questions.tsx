@@ -5,10 +5,9 @@ import { useEffect, useState } from "react";
 import { BiComment } from "react-icons/bi";
 import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import AnswerForm from "./AnswerForm";
-import { Answer } from "@/lib/types";
 import toast from "react-hot-toast";
 import {useToggleQuestionOpenState} from "@/hooks/useToggleQuestionOpenState";
-import QuestionsSkeleton from "./QuestionsSkeleton";
+import QuestionsSkeleton from "./skeletons/QuestionsSkeleton";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
