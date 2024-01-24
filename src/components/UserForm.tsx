@@ -80,8 +80,7 @@ const UserForm = ({
           <CiCircleInfo />
         </span>
         <span className="text-xs">
-          Please note you can only ask {ALLOWED_REQUESTS - 1} questions/hr,to
-          prevent spamming.{" "}
+          Please note, to prevent spamming, you're only allowed to ask 2 questions per hour.
         </span>
       </div>
     </form>
