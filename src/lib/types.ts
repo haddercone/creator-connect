@@ -18,3 +18,10 @@ export const AnswerSchema = z.object({
 })
 
 export type Answer = z.infer<typeof AnswerSchema>
+
+export type CreatorsProp = {
+    id: string;
+    username: string;
+    name: string;
+    profilePic: string;
+  }[];
