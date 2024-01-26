@@ -1,4 +1,4 @@
-import { CreatorsProp } from "./types";
+import { CreatorsProp, User } from "./types";
 
 export function getLastSuccessfullQuestionsTimeStamp(): string {
   const currentTime: Date = new Date();
@@ -18,4 +18,17 @@ export function filterUsers<T extends CreatorsProp>(data: T, query: string) {
     return hasQuery;
   });
   return filteredUsers;
+}
+
+export function getUpdatedFields<T extends User>(
+  existingUser: User,
+  newUser: T
+): Partial<T> | null {
+  const updatedFields: Partial<T> = {};
+  for (const [key, value] of Object.entries(newUser)) {
+    if (existingUser.hasOwnProperty(key) && existingUser[key as keyof User] !== value) {
+      updatedFields[key as keyof T] = value as T[keyof T];
+    }
+  }
+  return Object.keys(updatedFields).length > 0 ? updatedFields : null;
 }

@@ -84,6 +84,10 @@ const DashBoard = () => {
                 All questions
                 <RiArrowRightSLine />
               </button>
+              {data.user.role ===  'admin' && <button className="flex items-center justify-between p-2 bg-slate-950 w-full rounded-b  py-2">
+                 <span>Admin dashboard</span>
+                <RiArrowRightSLine />
+              </button>}
             </div>
             <div className="w-full h-fit bg-slate-900 p-4 rounded">
               <Questions email={data.user.email as string} />
