@@ -1,11 +1,11 @@
 import { Header } from "@/components";
 import Search from "@/components/Search";
-import { getCreaorsList } from "@/lib/mongo/getCreatorsList";
+import { getCreatorsList } from "@/lib/mongo/getCreatorsList";
 import Image from "next/image";
 import Link from "next/link";
 
 const CreatorsList = async () => {
-  const creators = await getCreaorsList();
+  const creators = await getCreatorsList();
 
   if ("error" in creators) {
     return <div>Error: {creators.error}</div>;
