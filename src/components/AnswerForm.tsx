@@ -100,7 +100,7 @@ const AnswerForm = ({
         <button
           type="button"
           onClick={() => toggleOpenState(idx)}
-          className="px-4 py-1 bg-red-600 rounded"
+          className="px-4 py-1 bg-slate-800 text-red-500 rounded"
         >
           Cancel
         </button>

@@ -15,6 +15,7 @@ datasource db {
 model Question {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   questionText    String
+  isApproved      Boolean   @default(false)
   isAnswered      Boolean   @default(false)
   isDeleted       Boolean   @default(false) 
   createdAt       DateTime  @default(now())

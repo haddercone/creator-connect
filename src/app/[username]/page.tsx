@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { UserProps, Username } from "./types";
+import { UserProps } from "./types";
 import Image from "next/image";
 import UserForm from "@/components/UserForm";
 import { Question } from "../dashboard/types";
 import toast from "react-hot-toast";
+import { Username } from "@/lib/types";
 
 const UserPage = () => {
   const params = useParams();
