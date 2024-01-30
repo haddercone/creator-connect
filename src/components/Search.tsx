@@ -9,19 +9,19 @@ import { CiSearch } from "react-icons/ci";
 
 const Search = ({ creators }: { creators: CreatorsProp }) => {
   const [query, setQuery] = useState("");
-  const [usersVisible, setUsersVisible] = useState(false);
+  const [visibleSuggestions, setVisibleSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<CreatorsProp>([])
 
 
   useEffect(() => {
-    if (query === "") {
-      setUsersVisible(false);
+    if (query.trim() === "") {
+      setVisibleSuggestions(false);
       return;
     } 
 
     const timerId = setTimeout(() => {
         const data = filterUsers(creators as CreatorsProp , query)
-        setUsersVisible(true);
+        setVisibleSuggestions(true);
         setSuggestions(data)
     }, 300)
 
@@ -35,10 +35,13 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
       <input
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => {
-          setUsersVisible(true);
+          if(query.trim() === "") {
+            return; 
+          }
+          setVisibleSuggestions(true);
         }}
         onBlur={() => {
-          setTimeout(() => setUsersVisible(false), 300);
+          setTimeout(() => setVisibleSuggestions(false), 300);
         }}
         value={query}
         className="bg-transparent outline-none w-full"
@@ -47,13 +50,13 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
       />
 
       <div className="absolute top-10 w-full">
-        {usersVisible &&
+        {visibleSuggestions &&
           suggestions.slice(0,10).map(({ name, username, id , profilePic}) => {
             return (
               <Link
                 href={`/${username}`}
                 key={id}
-                className="flex items-center gap-2 text-black bg-white p-2 rounded"
+                className="flex hover:bg-gray-300 items-center gap-2 text-black bg-white p-2 rounded"
               >
             <span>
                 <Image src={profilePic} width={20} height={20} className="rounded" alt={name}  />
