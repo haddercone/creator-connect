@@ -45,7 +45,7 @@ export async function getAllQuestionsByUser(email: string) {
         createdAt: "desc",
       },
       where: {
-        isDeleted: false,
+        isApproved: true, 
         recipient: {
           email: email,
         },

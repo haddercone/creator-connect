@@ -37,13 +37,10 @@ function Questions({ email }: { email: string }) {
   if (loadQuestions) {
     return (
       <QuestionsSkeleton />
-      // <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500">
-      //   Loading...
-      // </div>
     );
   }
 
-  return questions.length === 0 ? (
+  return questions && questions.length === 0 ? (
     <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
       <div className="text-6xl">
         <MdOutlineQuestionAnswer />
@@ -51,7 +48,7 @@ function Questions({ email }: { email: string }) {
       <p>No questions yet...</p>
     </div>
   ) : (
-    questions.map((question, idx) => {
+    questions && questions.map((question, idx) => {
       return (
         <div key={question?.id as string}>
           <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">

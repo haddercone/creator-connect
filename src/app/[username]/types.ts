@@ -6,4 +6,3 @@ export type UserProps =  {
     profilePic?: string | null;
   } | null
 
-export type Username =  string | string[]

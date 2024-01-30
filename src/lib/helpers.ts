@@ -13,7 +13,8 @@ export function getLastSuccessfullQuestionsTimeStamp(): string {
 export function filterUsers<T extends CreatorsProp>(data: T, query: string) {
   const filteredUsers : CreatorsProp = data.filter(({ name, username }) => {
     const textToSearch = name + username;
-    const hasQuery = textToSearch.toLowerCase().includes(query.toLowerCase());
+    const searchText = query.trim().toLowerCase();
+    const hasQuery = textToSearch.toLowerCase().includes(searchText);
     if (!hasQuery) return;
     return hasQuery;
   });

@@ -1,4 +1,3 @@
-// import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
 import Twitter from "next-auth/providers/twitter";
 import { NextAuthOptions } from "next-auth";
@@ -8,53 +7,19 @@ import { getUpdatedFields } from "@/lib/helpers";
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    // Google({
-    //     clientId: process.env.GOOGLE_CLIENT_ID as string,
-    //     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
-    // }),
     Twitter({
       clientId: process.env.TWITTER_API_KEY as string,
       clientSecret: process.env.TWITTER_API_SECRET as string,
-      // async profile(profile): Promise<any> {
-      //   const user = await prisma.user.findFirst({
-      //     where: {
-      //       email: profile.email,
-      //     },
-      //   });
-
-      //   if (!profile.role) {
-      //     profile.role = user?.role ?? "user";
-      //   }
-
-      //   return profile;
-      // },
     }),
     Github({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECERET as string,
-      // async profile(profile): Promise<any> {
-      //   const user = await prisma.user.findFirst({
-      //     where: {
-      //       email: profile.email,
-      //     },
-      //   });
-
-      //   if (!profile.role) {
-      //     profile.role = user?.role ?? "user";
-      //   }
-
-      //   return profile;
-      // },
     }),
   ],
   callbacks: {
     async signIn({ account, user, profile }: any) {
       try {
         const authProviders: String[] = ["github", "twitter"];
-        // console.log("user: ", user);
-        // console.log("profile: ", profile);
-        // console.log("Account: ", account);
-
         const inCommingUserObject = {
           username: (profile?.screen_name || profile?.login) as string,
           name: user?.name as string,
@@ -124,7 +89,6 @@ export const authOptions: NextAuthOptions = {
       session.user.username = token.userName;
       session.user.id = token.sub;
       session.user.role = token.role;
-      // console.log("session: ", session);
 
       return session;
     },

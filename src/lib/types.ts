@@ -26,10 +26,11 @@ export type CreatorsProp = {
     profilePic: string;
   }[];
 
-export type User = {
-    id?: string;
-    username: string;
-    name: string;
-    email: string;
-    profilePic: string;
-  };
+  export type User = {
+      id?: string;
+      username: string;
+      name: string;
+      email: string;
+      profilePic: string;
+    };
+export type Username =  string | string[]
