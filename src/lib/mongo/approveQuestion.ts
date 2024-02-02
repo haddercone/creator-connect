@@ -1,5 +1,6 @@
 "use server"
 import prisma from "@/server/db/PrismaClientSingleton"
+import { revalidatePath } from "next/cache"
 
 export const approveQuestion = async (id : string) => {
     try {
@@ -11,6 +12,7 @@ export const approveQuestion = async (id : string) => {
                 isApproved : true,
             }
         })
+        revalidatePath("/dashboard/admin")
         return response;
     } catch (error) {
         console.log("Error approving question \n", error);

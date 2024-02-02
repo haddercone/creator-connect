@@ -1,6 +1,7 @@
 "use server"
 
 import prisma from "@/server/db/PrismaClientSingleton"
+import { revalidatePath } from "next/cache";
 
 export const rejectQuestion = async (id : string) => {
     try {
@@ -9,6 +10,7 @@ export const rejectQuestion = async (id : string) => {
                 id: id,
             }
         })
+        revalidatePath("/dashboard/admin")
         return response;
     } catch (error) {
         console.log("Error rejecting question \n", error);

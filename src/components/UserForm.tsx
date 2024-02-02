@@ -56,7 +56,10 @@ const UserForm = ({
     setTimeStamp(timestamp);
 
     ref?.current?.reset();
-    toast.success("Question sent successfully!");
+    toast("Your question is under review, and the creator will respond upon completion.", {
+      style: {backgroundColor: "#40A2E3", color: "white"},
+    })
+    
   }
 
   return (
