@@ -19,18 +19,15 @@ export const AnswerSchema = z.object({
 
 export type Answer = z.infer<typeof AnswerSchema>
 
-export type CreatorsProp = {
-    id: string;
+export type User = {
+    id?: string;
     username: string;
     name: string;
+    email: string;
     profilePic: string;
-  }[];
+};
 
-  export type User = {
-      id?: string;
-      username: string;
-      name: string;
-      email: string;
-      profilePic: string;
-    };
+export type CreatorsProp = Required<Omit<User, "email">>[];
+export type UserProps = Partial<User> | null;
+
 export type Username =  string | string[]

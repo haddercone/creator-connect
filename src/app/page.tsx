@@ -1,15 +1,7 @@
-import { redirect } from "next/navigation";
-import { useServerSession } from "@/hooks/useServerSession";
 import Header from "@/components/Header";
 import Link from "next/link";
 
 export default async function Home() {
-  const session = await useServerSession();
-
-  if (session) {
-    redirect("/dashboard");
-  }
-
   return (
     <main>
       <Header />
