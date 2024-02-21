@@ -13,7 +13,10 @@ function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
   const {OpenStates, toggleOpenState, setOpenStates} = useToggleQuestionOpenState()
+  const [answeredQuestions, setAnsweredQuestions] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState("all");
 
+  const questionsTypes : string[] = ["all", "answered", "unanswered"]
   useEffect(() => {    
     (async () => {
       const questions  = await getAllQuestionsByUser(email);
@@ -34,6 +37,16 @@ function Questions({ email }: { email: string }) {
     toast.success("Question deleted successfully");
   }
 
+  const filteredQuestions =  questions.filter((question) => {
+      if(activeTab === "all") {
+        return true;
+      } else if (activeTab === "answered") {
+        return question.isAnswered === true;
+      } else {
+        return question.isAnswered === false;
+      }
+    });
+
   if (loadQuestions) {
     return (
       <QuestionsSkeleton />
@@ -48,41 +61,62 @@ function Questions({ email }: { email: string }) {
       <p>No questions yet...</p>
     </div>
   ) : (
-    questions && questions.map((question, idx) => {
-      return (
-        <div key={question?.id as string}>
-          <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">
-            <p>{question?.questionText}</p>
+    <>
+      <div className="flex justify-between gap-2 border-b-[1px] border-b-slate-400">
+        {questionsTypes.map((type) => {
+          const isActive = activeTab === type;
+          return (
+            <button
+              key={type}
+              onClick={() => {
+                setActiveTab(type);
+              }}
+              className={`${
+                isActive ? "bg-slate-700" : ""
+              } grow mb-2 rounded p-2`}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)} questions {type === "all" ? `(${questions.length})` : null}
+            </button>
+          );
+        })}
+      </div>
+      {filteredQuestions &&
+        filteredQuestions.map((question, idx) => {
+          return (
+            <div key={question?.id as string}>
+              <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">
+                <p>{question?.questionText}</p>
 
-            <div className=" flex justify-between gap-4">
-              <button
-                onClick={() => toggleOpenState(idx)}
-                className="text-green-700 p-2 rounded hover:bg-[#F1F1F11F]"
-                title="answer"
-              >
-                <BiComment />
-              </button>
-              <button
-                onClick={() => deleteAction(question.id as string)}
-                className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
-                title="delete"
-              >
-                <MdDelete />
-              </button>
+                <div className=" flex justify-between gap-4">
+                  <button
+                    onClick={() => toggleOpenState(idx)}
+                    className="text-green-700 p-2 rounded hover:bg-[#F1F1F11F]"
+                    title="answer"
+                  >
+                    <BiComment />
+                  </button>
+                  <button
+                    onClick={() => deleteAction(question.id as string)}
+                    className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
+                    title="delete"
+                  >
+                    <MdDelete />
+                  </button>
+                </div>
+              </div>
+              {OpenStates[idx] && (
+                <AnswerForm
+                  question={question}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                  toggleOpenState={(arg: number) => toggleOpenState(arg)}
+                  idx={idx}
+                />
+              )}
             </div>
-          </div>
-          {OpenStates[idx] && (
-            <AnswerForm
-              question={question}
-              questions={questions}
-              setQuestions={setQuestions}
-              toggleOpenState={(arg: number) => toggleOpenState(arg)}
-              idx={idx}
-            />
-          )}
-        </div>
-      );
-    })
+          );
+        })}
+    </>
   );
 }
 
