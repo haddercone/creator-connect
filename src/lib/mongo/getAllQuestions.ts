@@ -2,7 +2,12 @@ import prisma from "@/server/db/PrismaClientSingleton"
 
 type QuestionProp = {
     id: string,
-    questionText: string
+    questionText: string,
+    recipient: {
+        name: string,
+        profilePic: string,
+        username: string,
+    }
   }
 
 export const getAllQuestions = async () => {
@@ -14,7 +19,14 @@ export const getAllQuestions = async () => {
             },
             select: {
                 id: true,
-                questionText: true
+                questionText: true,
+                recipient: {
+                    select: {
+                        name: true,
+                        profilePic: true,
+                        username: true,
+                    }
+                }
             }
         })
         return allQuestions;
