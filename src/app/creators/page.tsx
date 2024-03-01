@@ -25,12 +25,12 @@ const CreatorsList = async () => {
             <Search creators={creators} />
           </div>
         </div>
-        <div className="flex justify-start px-2 lg:px-0 items-center gap-2 my-4 flex-wrap">
+        <div className="flex justify-start  px-2 lg:px-0 gap-2 my-4 items-center flex-wrap">
           {Array.isArray(creators) &&
             creators.map(({ id, name, profilePic, username }) => {
               return (
                 <div
-                  className="flex grow lg:w-1/2 max-w-96 overflow-ellipsis lg:grow-0 items-center gap-4 px-4 py-2  border border-slate-800"
+                  className="flex w-full md:w-[49.4%] overflow-ellipsis items-center gap-4 px-4 py-2  border border-slate-800"
                   key={id}
                 >
                   <Image

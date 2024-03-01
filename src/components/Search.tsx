@@ -31,7 +31,7 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
 
   return (
     <div className="flex w-full relative justify-center items-center border-2 border-slate-500 gap-2 px-2 py-1 rounded">
-      <CiSearch />
+      <CiSearch className="w-8 h-8"/>
       <input
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => {
@@ -44,19 +44,19 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
           setTimeout(() => setVisibleSuggestions(false), 300);
         }}
         value={query}
-        className="bg-transparent outline-none w-full"
+        className="bg-transparent outline-none w-full py-1"
         placeholder="search by name or username"
         type="text"
       />
 
-      <div className="absolute top-10 w-full">
+      <div className="absolute top-10 w-full rounded overflow-hidden">
         {visibleSuggestions &&
           suggestions.slice(0,10).map(({ name, username, id , profilePic}) => {
             return (
               <Link
                 href={`/${username}`}
                 key={id}
-                className="flex hover:bg-gray-300 items-center gap-2 text-black bg-white p-2 rounded"
+                className="flex hover:bg-gray-300 items-center gap-2 text-black bg-white p-2"
               >
             <span>
                 <Image src={profilePic} width={20} height={20} className="rounded" alt={name}  />
