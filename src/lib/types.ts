@@ -29,5 +29,3 @@ export type User = {
 
 export type CreatorsProp = Required<Omit<User, "email">>[];
 export type UserProps = Partial<User> | null;
-
-export type Username =  string | string[]

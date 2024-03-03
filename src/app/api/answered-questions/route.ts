@@ -5,12 +5,8 @@ export async function GET(req: NextRequest) {
   const username = req.nextUrl.searchParams.get("username");
   try {
     const answeredQuestions = await prisma.question.findMany({
-      // include: {
-      //   answer: true,
-      // },
       select: {
         questionText: true,
-        isAnswered: true,
         id: true,
         answer: {
           select: {
