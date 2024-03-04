@@ -8,16 +8,16 @@ import toast from "react-hot-toast";
 import { Question } from "@/app/dashboard/types";
 
 type AnswerFormProps = {
-  toggleOpenState: (arg: number) => void;
-  idx: number;
+  setOpenQuestion: () => void;
+  isOpen: boolean;
   question: Question;
   questions: Question[];
   setQuestions: Dispatch<SetStateAction<Question[]>>;
 };
 
 const AnswerForm = ({
-  toggleOpenState,
-  idx,
+  setOpenQuestion,
+  isOpen,
   question,
   questions,
   setQuestions,
@@ -82,12 +82,11 @@ const AnswerForm = ({
     );
 
     setQuestions(updatedQuestions);
-
-    toggleOpenState(idx);
+    setOpenQuestion()
   }
 
   return (
-    <form action={answerAction}>
+    isOpen && <form action={answerAction}>
       <textarea
         value={answerText}
         placeholder="Your answer here..."
@@ -99,7 +98,7 @@ const AnswerForm = ({
       <div className="flex mt-2 justify-end gap-2">
         <button
           type="button"
-          onClick={() => toggleOpenState(idx)}
+          onClick={() => setOpenQuestion()}
           className="px-4 py-1 bg-slate-800 text-red-500 rounded"
         >
           Cancel

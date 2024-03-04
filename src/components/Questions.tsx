@@ -6,22 +6,19 @@ import { BiComment } from "react-icons/bi";
 import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
 import AnswerForm from "./AnswerForm";
 import toast from "react-hot-toast";
-import {useToggleQuestionOpenState} from "@/hooks/useToggleQuestionOpenState";
 import QuestionsSkeleton from "./skeletons/QuestionsSkeleton";
 
 function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
-  const {OpenStates, toggleOpenState, setOpenStates} = useToggleQuestionOpenState()
-  const [answeredQuestions, setAnsweredQuestions] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState("all");
+  const [currentOpenQuestion, setCurrentOpenQuestion] = useState<string>("")
 
   const questionsTypes : string[] = ["all", "answered", "unanswered"]
   useEffect(() => {    
     (async () => {
       const questions  = await getAllQuestionsByUser(email);
       setQuestions(questions as Question[]);
-      setOpenStates(new Array(questions?.length).fill(false));
       setLoadQuestions(false);
     })();
   }, []);
@@ -62,7 +59,7 @@ function Questions({ email }: { email: string }) {
     </div>
   ) : (
     <>
-      <div className="flex justify-between gap-2 border-b-[1px] border-b-slate-400">
+      <div className="flex justify-between gap-2 border-b-[1px] border-b-slate-400 overflow-auto whitespace-nowrap">
         {questionsTypes.map((type) => {
           const isActive = activeTab === type;
           return (
@@ -70,6 +67,7 @@ function Questions({ email }: { email: string }) {
               key={type}
               onClick={() => {
                 setActiveTab(type);
+                setCurrentOpenQuestion("")
               }}
               className={`${
                 isActive ? "bg-slate-700" : ""
@@ -89,7 +87,7 @@ function Questions({ email }: { email: string }) {
 
                 <div className=" flex justify-between gap-4">
                   <button
-                    onClick={() => toggleOpenState(idx)}
+                    onClick={() => setCurrentOpenQuestion(currentOpenQuestion === question.id ? "": question.id as string)}
                     className="text-green-700 p-2 rounded hover:bg-[#F1F1F11F]"
                     title="answer"
                   >
@@ -104,15 +102,13 @@ function Questions({ email }: { email: string }) {
                   </button>
                 </div>
               </div>
-              {OpenStates[idx] && (
-                <AnswerForm
-                  question={question}
-                  questions={questions}
-                  setQuestions={setQuestions}
-                  toggleOpenState={(arg: number) => toggleOpenState(arg)}
-                  idx={idx}
-                />
-              )}
+              <AnswerForm
+                isOpen = {currentOpenQuestion === question.id}
+                setOpenQuestion ={() => setCurrentOpenQuestion(currentOpenQuestion === question.id as string ? "" : question.id as string)}
+                question={question}
+                questions={questions}
+                setQuestions={setQuestions}
+              />
             </div>
           );
         })}

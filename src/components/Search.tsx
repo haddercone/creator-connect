@@ -49,7 +49,7 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
         type="text"
       />
 
-      <div className="absolute top-10 w-full rounded overflow-hidden">
+      <div className="absolute top-12 w-full rounded overflow-hidden">
         {visibleSuggestions &&
           suggestions.slice(0,10).map(({ name, username, id , profilePic}) => {
             return (
