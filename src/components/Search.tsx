@@ -1,13 +1,18 @@
 "use client";
 
 import { filterUsers } from "@/lib/helpers";
+import { searchUsers } from "@/lib/mongo/searchUsers";
 import { CreatorsProp } from "@/lib/types";
+import { strict } from "assert";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
+import { unknown } from "zod";
 
-const Search = ({ creators }: { creators: CreatorsProp }) => {
+
+const Search = () => {
   const [query, setQuery] = useState("");
   const [visibleSuggestions, setVisibleSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<CreatorsProp>([])
@@ -19,11 +24,14 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
       return;
     } 
 
-    const timerId = setTimeout(() => {
-        const data = filterUsers(creators as CreatorsProp , query)
+    const timerId = setTimeout(async () => {
+        const response = await searchUsers(query)
+        if('error' in response) {
+          return toast.error(response.error);
+        }
         setVisibleSuggestions(true);
-        setSuggestions(data)
-    }, 300)
+        setSuggestions(response)
+    }, 500)
 
     return () => clearTimeout(timerId);
 
@@ -58,9 +66,9 @@ const Search = ({ creators }: { creators: CreatorsProp }) => {
                 key={id}
                 className="flex hover:bg-gray-300 items-center gap-2 text-black bg-white p-2"
               >
-            <span>
-                <Image src={profilePic} width={20} height={20} className="rounded" alt={name}  />
-            </span>
+                <span>
+                    <Image src={profilePic} width={20} height={20} className="rounded" alt={name}  />
+                </span>
                 <span>{name}</span>
                 <span className="text-gray-400">@{username}</span>
               </Link>

@@ -8,6 +8,7 @@ import Questions from "./Questions";
 import QuestionsSkeleton from "./skeletons/QuestionsSkeleton";
 import SubmitAnswerButton from "./SubmitAnswerButton";
 import UserForm from "./UserForm";
+import Pagination from "./Pagination";
 
 export {
   AnswerForm,
@@ -20,4 +21,5 @@ export {
   QuestionsSkeleton,
   SubmitAnswerButton,
   UserForm,
+  Pagination,
 };

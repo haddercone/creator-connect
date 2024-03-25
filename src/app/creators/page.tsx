@@ -1,18 +1,32 @@
-import { Header } from "@/components";
+import { Header, Pagination } from "@/components";
 import Search from "@/components/Search";
-import { getCreatorsList } from "@/lib/mongo/getCreatorsList";
+import { getCreatorsByPage } from "@/lib/mongo/geCreatorsByPage";
+import { CreatorsProp } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-const CreatorsList = async () => {
-  const creators = await getCreatorsList();
+const CreatorsList = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const currentPage = searchParams["page"] ?? "1";
+  const perPage = 4;
 
-  if ("error" in creators) {
-    return <div>Error: {creators.error}</div>;
+  const start = (Number(currentPage) - 1) * perPage;
+  const end = start + perPage;
+  const { response, totalUsers, error } = await getCreatorsByPage(
+    Number(currentPage),
+    perPage
+  );
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
-  if (creators.length === 0) {
-    return <div>No Creator Found</div>;
+  if (response?.length === 0) {
+    notFound()
   }
 
   return (
@@ -22,12 +36,12 @@ const CreatorsList = async () => {
         <div className="flex px-2 justify-between py-4 items-center flex-wrap gap-4 border border-transparent border-y-slate-700">
           <p className=" grow font-bold text-2xl">Find Creators</p>
           <div className="grow bg-[#00000039] flex items-center">
-            <Search creators={creators} />
+            <Search />
           </div>
         </div>
         <div className="flex justify-start  px-2 lg:px-0 gap-2 my-4 items-center flex-wrap">
-          {Array.isArray(creators) &&
-            creators.map(({ id, name, profilePic, username }) => {
+          {Array.isArray(response) &&
+            response.map(({ id, name, profilePic, username }) => {
               return (
                 <div
                   className="flex w-full md:w-[49.4%] overflow-ellipsis items-center gap-4 px-4 py-2  border border-slate-800"
@@ -56,6 +70,12 @@ const CreatorsList = async () => {
               );
             })}
         </div>
+        <Pagination
+          perPage={perPage}
+          totaUsers={totalUsers as number}
+          hasNext={end < (totalUsers as number)}
+          hasPrevious={start > 0}
+        />
       </div>
     </>
   );

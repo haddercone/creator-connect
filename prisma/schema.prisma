@@ -31,7 +31,6 @@ model User {
   name        String
   profilePic  String
   questions   Question[]
-  
 }
 
   model Answer {

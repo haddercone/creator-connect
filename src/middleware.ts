@@ -12,7 +12,7 @@ const ratelimit = new Ratelimit({
 
 export const config = {
   matcher:
-    "/((?!api|_next|fonts|examples|dashboard|not-found|[\\w-]+\\.\\w+).*)/",
+    "/((?!api|_next|fonts|examples|dashboard|not-found|creators|[\\w-]+\\.\\w+).*)/",
 };
 
 export default async function middleware(request: NextRequest) {
