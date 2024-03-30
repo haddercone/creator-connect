@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({
             : "hover:scale-105 transition-all bg-slate-700"
         }`}
         disabled={!hasPrevious}
-        onClick={() => router.push(`/creators?page=${Number(page) - 1}`)}
+        onClick={() => router.back()}
       >
         <IoIosArrowBack />
         Prev

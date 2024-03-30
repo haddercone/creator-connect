@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/server/db/PrismaClientSingleton";
+import { revalidatePath } from "next/cache";
 
 export async function getCreatorsByPage(pageNumber: number, perpage: number) {
   const skip = (pageNumber - 1) * perpage;
@@ -19,6 +20,7 @@ export async function getCreatorsByPage(pageNumber: number, perpage: number) {
       },
     });
 
+    revalidatePath("/creators")
     return { response, totalUsers };
   } catch (error) {
     console.log("Error getting creators list: ", error);
