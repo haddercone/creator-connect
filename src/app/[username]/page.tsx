@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import UserForm from "@/components/UserForm";
+import CreatorPageSkeleton from "@/components/skeletons/CreatorPageSkeleton";
 import { Question } from "../dashboard/types";
 import toast from "react-hot-toast";
 import { UserProps } from "@/lib/types";
@@ -48,11 +49,7 @@ const UserPage = ({ params } : { params: { username: string }}) => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        Loading ....
-      </div>
-    );
+    return <CreatorPageSkeleton />;
   }
   
   return (
