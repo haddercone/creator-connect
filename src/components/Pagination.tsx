@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 interface PaginationProps {
@@ -18,6 +19,13 @@ const Pagination: React.FC<PaginationProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const page = searchParams.get("page") ?? "1";
+  const [isPending, startTransition] = useTransition();
+
+  const goToPage = (nextPage: number) => {
+    startTransition(() => {
+      router.push(`/creators?page=${nextPage}`);
+    });
+  };
 
   return (
     <div className="flex items-center justify-between m-4">
@@ -27,11 +35,11 @@ const Pagination: React.FC<PaginationProps> = ({
             ? "opacity-35"
             : "hover:scale-105 transition-all bg-slate-700"
         }`}
-        disabled={!hasPrevious}
-        onClick={() => router.push(`/creators?page=${Number(page) - 1}`)}
+        disabled={!hasPrevious || isPending}
+        onClick={() => goToPage(Number(page) - 1)}
       >
         <IoIosArrowBack />
-        Prev
+        {isPending ? "Prev..." : "Prev"}
       </button>
       <p>
         Page {page} of {Math.ceil(totaUsers / perPage)}{" "}
@@ -42,10 +50,10 @@ const Pagination: React.FC<PaginationProps> = ({
             ? "opacity-35"
             : "hover:scale-105 transition-all bg-slate-700"
         }`}
-        disabled={!hasNext}
-        onClick={() => router.push(`/creators?page=${Number(page) + 1}`)}
+        disabled={!hasNext || isPending}
+        onClick={() => goToPage(Number(page) + 1)}
       >
-        Next
+        {isPending ? "Next..." : "Next"}
         <IoIosArrowForward />
       </button>
     </div>
