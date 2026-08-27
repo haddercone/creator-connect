@@ -24,9 +24,9 @@ function getClientIp(requestHeaders: Headers) {
   );
 }
 
-function getSubmitterKey(requestHeaders: Headers) {
+function getSubmitterKey(requestHeaders: Headers, recipientId: string) {
   return createHash("sha256")
-    .update(getClientIp(requestHeaders))
+    .update(`${recipientId}:${getClientIp(requestHeaders)}`)
     .digest("hex");
 }
 
@@ -48,7 +48,7 @@ export async function createQuestion(newQuestion: unknown) {
 
   try {
     const requestHeaders = await headers();
-    const submitterKey = getSubmitterKey(requestHeaders);
+    const submitterKey = getSubmitterKey(requestHeaders, recipientId);
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const recentQuestions = await prisma.question.count({
       where: {
