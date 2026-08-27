@@ -86,26 +86,28 @@ const AnswerForm = ({
   }
 
   return (
-    isOpen && <form action={answerAction}>
-      <textarea
-        value={answerText}
-        placeholder="Your answer here..."
-        onChange={(e) => setAnswerText(e.target.value)}
-        name="answerText"
-        className="w-full resize-none max-h-20 min-h-20 outline-none border border-transparent py-1 px-2 bg-[#F1F1F11F] rounded"
-        required
-      ></textarea>
-      <div className="flex mt-2 justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => setOpenQuestion()}
-          className="px-4 py-1 bg-slate-800 text-red-500 rounded"
-        >
-          Cancel
-        </button>
-        <SubmitAnswerButton />
-      </div>
-    </form>
+    isOpen && (
+      <form action={answerAction} className="mt-3 border-t border-[#292d36] pt-3">
+        <textarea
+          value={answerText}
+          placeholder="Your answer here..."
+          onChange={(e) => setAnswerText(e.target.value)}
+          name="answerText"
+          className="min-h-20 w-full resize-none rounded-xl border border-[#3a404c] bg-[#111318] p-4 text-sm leading-6 text-[#f4f3ef] outline-none placeholder:text-[#858b98] focus:border-[#d8f36b]"
+          required
+        ></textarea>
+        <div className="mt-3 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setOpenQuestion()}
+            className="rounded-lg border border-[#3a404c] px-4 py-2 text-sm font-medium text-[#858b98] transition-colors hover:border-[#f87171] hover:text-[#f87171]"
+          >
+            Cancel
+          </button>
+          <SubmitAnswerButton />
+        </div>
+      </form>
+    )
   );
 };
 

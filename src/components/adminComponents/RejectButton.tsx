@@ -17,7 +17,7 @@ const RejectQuestion = ({ id }: { id: string }) => {
     <button
       onClick={handleReject}
       type="submit"
-      className="bg-slate-800 p-2 text-red-500 rounded"
+      className="rounded-lg border border-[#3a404c] bg-transparent px-4 py-2 text-sm font-semibold text-[#f87171] transition-colors hover:border-[#f87171] hover:bg-[#f871710d]"
     >
       Reject
     </button>

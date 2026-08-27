@@ -9,20 +9,29 @@ export type PopularCreator = {
   answeredQuestions: number;
 };
 
-export const getPopularCreators = async (limit = 5) => {
+export const getPopularCreators = async (limit = 3) => {
   try {
-    const ranked = await prisma.question.groupBy({
+    // Prisma's MongoDB groupBy does not support orderBy on _count, so sort in JS.
+    const rankedGroups = await prisma.question.groupBy({
       by: ["recipientId"],
-      where: { isAnswered: true },
+      where: {
+        isApproved: true,
+        isAnswered: true,
+        isDeleted: false,
+        answer: { isNot: null },
+      },
       _count: { _all: true },
-      orderBy: { _count: { recipientId: "desc" } },
-      take: limit,
     });
 
-    if (ranked.length === 0) return [];
+    const ranked = rankedGroups
+      .sort((a, b) => b._count._all - a._count._all)
+      .slice(0, limit);
 
     const recipients = await prisma.user.findMany({
-      where: { id: { in: ranked.map((r) => r.recipientId) } },
+      where: {
+        id: { in: ranked.map((r) => r.recipientId) },
+      },
+      orderBy: { id: "desc" },
       select: {
         id: true,
         name: true,
@@ -46,7 +55,25 @@ export const getPopularCreators = async (limit = 5) => {
       })
       .filter((c): c is PopularCreator => c !== null);
 
-    return popularCreators;
+    if (popularCreators.length >= limit) return popularCreators;
+
+    const rankedIds = new Set(popularCreators.map((c) => c.id));
+    const fillers = await prisma.user.findMany({
+      where: { id: { notIn: Array.from(rankedIds) } },
+      orderBy: { id: "desc" },
+      take: limit - popularCreators.length,
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        profilePic: true,
+      },
+    });
+
+    return [
+      ...popularCreators,
+      ...fillers.map((user) => ({ ...user, answeredQuestions: 0 })),
+    ];
   } catch (error) {
     console.log("Error getting popular creators: \n", error);
     return { error: "Error getting popular creators" };

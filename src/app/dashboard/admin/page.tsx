@@ -5,75 +5,95 @@ import { getAllQuestions } from "@/lib/mongo/getAllQuestions";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { MdOutlineQuestionAnswer } from "react-icons/md";
 
 const AdminDashBoard = async () => {
-  const session = await useServerSession()
-  
-  if(session?.user.role !== "admin"){
-    redirect("/dashboard")
+  const session = await useServerSession();
+
+  if (session?.user.role !== "admin") {
+    redirect("/dashboard");
   }
 
   const allQuestions = await getAllQuestions();
 
   if ("error" in allQuestions) {
-    return <p>{allQuestions.error}</p>;
+    return <p className="text-[#858b98]">{allQuestions.error}</p>;
   }
 
   if (allQuestions.length === 0) {
-    return <div>
-      <p className="text-center font-bold text-2xl  py-4 bg-slate-700">
-        Admin Dashboard
-      </p>
-      <div className="text-center py-3 min-h-[90vh] text-2xl text-slate-500 flex justify-center items-center">No Pending questions</div>
-    </div>;
+    return (
+      <main className="flex min-h-[calc(100vh-73px)] items-center justify-center px-6 py-16">
+        <div className="w-full max-w-md rounded-2xl border border-[#292d36] bg-[#111318] px-8 py-12 text-center">
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#171a21] text-3xl text-[#d8f36b]">
+            <MdOutlineQuestionAnswer />
+          </div>
+          <h2 className="text-2xl font-bold tracking-[-0.03em] text-[#f4f3ef]">
+            All caught up
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#858b98]">
+            There are no pending questions in the moderation queue right now.
+          </p>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <div>
-      <p className="text-center font-bold text-2xl  py-4 bg-slate-700">
-        Admin Dashboard
-      </p>
-      <div className=" my-4 min-h-screen">
-        <div className="md:w-1/2 w-full  md:mx-auto md:rounded bg-slate-600 px-4 py-2">
-        {allQuestions.map(({ id, questionText, recipient }) => {
-          return (
-            <div
-              key={id}
-              className="bg-slate-900 p-2 rounded my-2 flex gap-2 justify-between items-center flex-wrap"
-            >
-              <div>
-                <p className="font-bold">{questionText}</p>
-                <div className="flex gap-2">
-                  <p className="text-slate-500 text-sm">
-                    For -{" "}
+    <main className="min-h-[calc(100vh-73px)] px-6 py-10">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#d8f36b]">
+            Moderation queue
+          </p>
+          <h1 className="text-4xl font-bold tracking-[-0.03em] text-[#f4f3ef]">
+            Admin Dashboard
+          </h1>
+          <p className="mt-2 flex items-center gap-2 text-sm text-[#858b98]">
+            <span className="h-2 w-2 rounded-full bg-[#d8f36b]" />
+            {allQuestions.length} pending{" "}
+            {allQuestions.length === 1 ? "question" : "questions"}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {allQuestions.map(({ id, questionText, recipient }) => {
+            return (
+              <div
+                key={id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#292d36] bg-[#111318] p-5"
+              >
+                <div className="min-w-0">
+                  <p className="font-semibold leading-7 text-[#f4f3ef]">
+                    {questionText}
+                  </p>
+                  <div className="mt-3 flex items-center gap-2 text-sm text-[#858b98]">
+                    <span>For</span>
                     <Link
-                      className="hover:underline"
+                      className="flex items-center gap-2 font-medium text-[#f4f3ef] hover:text-[#d8f36b]"
                       href={`/${recipient.username}`}
                     >
-                      {recipient.name}
+                      <Image
+                        src={recipient.profilePic}
+                        width={20}
+                        height={20}
+                        className="rounded-full ring-1 ring-[#3a404c]"
+                        alt={recipient.name}
+                      />
+                      @{recipient.username}
                     </Link>
-                  </p>
-                  <Image
-                    src={recipient.profilePic}
-                    width={20}
-                    height={20}
-                    className="rounded-full"
-                    alt={recipient.name}
-                  />
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  <ApproveButton id={id as string} />
+                  <RejectButton id={id as string} />
                 </div>
               </div>
-              <div className="flex gap-2 flex-wrap justify-center items-center">
-                <ApproveButton id={id as string} />
-                <RejectButton id={id as string} />
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </div>
       </div>
-    </div>
+    </main>
   );
 };
-
 
 export default AdminDashBoard;

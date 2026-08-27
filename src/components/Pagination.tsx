@@ -27,33 +27,35 @@ const Pagination: React.FC<PaginationProps> = ({
     });
   };
 
+  const buttonBase =
+    "flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors sm:px-4 sm:py-2";
+  const buttonEnabled =
+    "border-[#292d36] bg-[#171a21] text-[#f4f3ef] hover:border-[#d8f36b] hover:text-[#d8f36b]";
+  const buttonDisabled = "cursor-not-allowed border-[#292d36] opacity-30";
+
   return (
-    <div className="flex items-center justify-between m-4">
+    <div className="mx-0 my-8 flex items-center justify-between sm:mx-4">
       <button
-        className={`flex gap-2 items-center border-2 rounded px-3 py-2 sm:px-4 sm:py-2  ${
-          !hasPrevious
-            ? "opacity-35"
-            : "hover:scale-105 transition-all bg-slate-700"
+        className={`${buttonBase} ${
+          !hasPrevious || isPending ? buttonDisabled : buttonEnabled
         }`}
         disabled={!hasPrevious || isPending}
         onClick={() => goToPage(Number(page) - 1)}
       >
         <IoIosArrowBack />
-        {isPending ? "Prev..." : "Prev"}
+        <span>{isPending ? "Prev..." : "Prev"}</span>
       </button>
-      <p className="hidden min-[380px]:block">
-        Page {page} of {Math.ceil(totaUsers / perPage)}{" "}
+      <p className="hidden text-sm text-[#858b98] min-[380px]:block">
+        Page {page} of {Math.ceil(totaUsers / perPage)}
       </p>
       <button
-        className={`flex gap-2 items-center border-2 rounded px-3 py-2 sm:px-4 sm:py-2  ${
-          !hasNext
-            ? "opacity-35"
-            : "hover:scale-105 transition-all bg-slate-700"
+        className={`${buttonBase} ${
+          !hasNext || isPending ? buttonDisabled : buttonEnabled
         }`}
         disabled={!hasNext || isPending}
         onClick={() => goToPage(Number(page) + 1)}
       >
-        {isPending ? "Next..." : "Next"}
+        <span>{isPending ? "Next..." : "Next"}</span>
         <IoIosArrowForward />
       </button>
     </div>

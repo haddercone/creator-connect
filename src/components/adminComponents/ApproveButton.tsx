@@ -16,8 +16,8 @@ const ApproveButton = ({ id }: { id: string }) => {
   return (
     <button
       onClick={handleApprove}
-      className="p-2 text-green-500 bg-slate-800 rounded"
       type="submit"
+      className="rounded-lg bg-[#d8f36b] px-4 py-2 text-sm font-semibold text-[#171b0a] transition-colors hover:bg-[#e4fa8a]"
     >
       Approve
     </button>

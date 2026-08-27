@@ -1,12 +1,19 @@
 "use server";
 import prisma from "@/server/db/PrismaClientSingleton";
 
-export async function getCreatorsByPage(pageNumber: number, perpage: number) {
+export async function getCreatorsByPage(
+  pageNumber: number,
+  perpage: number,
+  excludeIds: string[] = []
+) {
   const skip = (pageNumber - 1) * perpage;
   try {
-    const [totalUsers, response] = await Promise.all([
+    const where = { id: { notIn: excludeIds } };
+    const [totalUsers, gridTotal, response] = await Promise.all([
       prisma.user.count(),
+      prisma.user.count({ where }),
       prisma.user.findMany({
+        where,
         orderBy: {
           id: "desc",
         },
@@ -21,7 +28,7 @@ export async function getCreatorsByPage(pageNumber: number, perpage: number) {
       }),
     ]);
 
-    return { response, totalUsers };
+    return { response, totalUsers, gridTotal };
   } catch (error) {
     console.log("Error getting creators list: ", error);
     return {
