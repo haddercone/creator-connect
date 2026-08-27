@@ -4,7 +4,7 @@ import { deleteQuestion } from "@/app/actions/actions";
 import { Question } from "@/app/dashboard/types";
 import { useClickOutside } from "@/hooks";
 import { Dispatch, SetStateAction, useState } from "react";
-import { RiChat1Line, RiDeleteBinLine, RiMore2Fill } from "react-icons/ri";
+import { RiDeleteBinLine, RiMore2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 
 type QuestionCardProps = {
@@ -58,10 +58,6 @@ const QuestionCard = ({
             <span className={answered ? "text-[#d8f36b]" : "text-[#858b98]"}>
               {answered ? "Answered" : "Awaiting your answer"}
             </span>
-          </span>
-          <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#d8f36b]">
-            <RiChat1Line className="h-3.5 w-3.5" />
-            {answered ? "Update answer" : "Answer"}
           </span>
         </button>
 
