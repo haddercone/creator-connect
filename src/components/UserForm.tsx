@@ -3,7 +3,7 @@
 import { createQuestion } from "@/app/actions/actions";
 import FormSubmitButton from "./FormSubmitButton";
 import { CiCircleInfo } from "react-icons/ci";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QuestionSchema } from "@/lib/types";
 import toast from "react-hot-toast";
 import { getLastSuccessfullQuestionsTimeStamp } from "@/lib/helpers";
@@ -16,9 +16,12 @@ const UserForm = ({
   recipientName: string;
 }) => {
   const ref = useRef<HTMLFormElement>(null);
-  const [timeStamp, setTimeStamp] = useState(
-    localStorage.getItem("timeStamp") ?? ""
-  );
+  const [timeStamp, setTimeStamp] = useState("");
+  const timestampStorageKey = `lastQuestionTimestamp:${recipientId}`;
+
+  useEffect(() => {
+    setTimeStamp(localStorage.getItem(timestampStorageKey) ?? "");
+  }, [timestampStorageKey]);
 
   async function clientAction(formData: FormData) {
     const newQuestion = {
@@ -52,7 +55,7 @@ const UserForm = ({
       return;
     }
     const timestamp = getLastSuccessfullQuestionsTimeStamp();
-    localStorage.setItem("timeStamp", timestamp);
+    localStorage.setItem(timestampStorageKey, timestamp);
     setTimeStamp(timestamp);
 
     ref?.current?.reset();
