@@ -40,7 +40,7 @@ To get started with Creator Connect, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/haddercone/creator-connect.git`
 2. Install dependencies: `npm install`
-3. Configure environment variables, such as API keys for authentication.
+3. Copy `.env.example` to `.env` and configure the required environment variables. Set `DATABASE_URL` to your MongoDB Atlas connection string, including the database name. Also add the Atlas network IP address and database user permissions required by that connection.
 4. Run the application: `npm run dev`
 
 Feel free to explore the codebase and contribute to the project!
