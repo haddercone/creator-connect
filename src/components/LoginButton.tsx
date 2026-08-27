@@ -1,24 +1,31 @@
-"use client"
+"use client";
 import { signIn } from "next-auth/react";
+import type { ReactNode } from "react";
+
+const providerLabels: Record<string, string> = {
+  github: "GitHub",
+  twitter: "X",
+};
 
 type ButtonProps = {
   provider: string;
-  icon : any;
-}
+  icon: ReactNode;
+};
 
-const LoginButton = ({provider, icon}: ButtonProps ) => { 
-  
+const LoginButton = ({ provider, icon }: ButtonProps) => {
+  const label = providerLabels[provider] ?? provider;
+
   return (
     <button
       onClick={() =>
         signIn(provider, { callbackUrl: "/dashboard", redirect: true })
       }
-      className="bg-white rounded my-4 text-black px-4 py-2 flex justify-center w-full items-center gap-4"
+      className="flex w-full items-center justify-center gap-4 rounded-xl border border-[#3a404c] bg-[#171a21] px-4 py-3 text-sm font-semibold text-[#f4f3ef] hover:border-[#d8f36b] hover:bg-[#111318] hover:text-[#d8f36b]"
     >
-      <span>{icon}</span>
-      <span>Login with {provider}</span>
+      <span className="text-lg">{icon}</span>
+      <span>Continue with {label}</span>
     </button>
-  )
-}
+  );
+};
 
-export default LoginButton
+export default LoginButton;

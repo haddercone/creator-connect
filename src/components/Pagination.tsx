@@ -30,7 +30,7 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="flex items-center justify-between m-4">
       <button
-        className={`flex gap-2 items-center border-2 rounded px-4 py-2  ${
+        className={`flex gap-2 items-center border-2 rounded px-3 py-2 sm:px-4 sm:py-2  ${
           !hasPrevious
             ? "opacity-35"
             : "hover:scale-105 transition-all bg-slate-700"
@@ -41,11 +41,11 @@ const Pagination: React.FC<PaginationProps> = ({
         <IoIosArrowBack />
         {isPending ? "Prev..." : "Prev"}
       </button>
-      <p>
+      <p className="hidden min-[380px]:block">
         Page {page} of {Math.ceil(totaUsers / perPage)}{" "}
       </p>
       <button
-        className={`flex gap-2 items-center border-2 rounded px-4 py-2  ${
+        className={`flex gap-2 items-center border-2 rounded px-3 py-2 sm:px-4 sm:py-2  ${
           !hasNext
             ? "opacity-35"
             : "hover:scale-105 transition-all bg-slate-700"

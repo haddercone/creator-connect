@@ -1,28 +1,32 @@
-import React from 'react'
-
-const Loader = () => {
-    return (
-        <div className='min-h-screen'>
-          <div className='h-20 animate-pulse bg-slate-400'></div>
-          <div className='lg:w-2/3 mx-auto my-2 bg-slate-700'>
-            <div className='flex min-h-16 flex-col lg:items-center  gap-2 lg:flex-row md:justify-between items-start p-2 '>
-              <div className='h-10 w-36 bg-slate-400 animate-pulse rounded'></div>
-              <div className='h-10 w-full lg:w-1/2 bg-slate-400 animate-pulse rounded'></div>
-            </div>
-            <div className='flex my-4 flex-wrap px-2 pb-2 gap-2'>
-              {Array.from({length: 10}).map((_, index) => {
-                return <div key={index} className=' rounded-md lg:w-[49.4%] w-full p-2 flex animate-pulse bg-slate-800 gap-4 justify-start items-center'>
-                  <div className='w-28 h-28 rounded-full bg-slate-400 animate-pulse'></div>
-                  <div>
-                    <div className='h-4 my-2 w-52 bg-slate-400 animate-pulse'></div>
-                    <div className='h-2 w-24 bg-slate-400 animate-pulse'></div>
-                  </div>
-                </div>
-              })}
+const CreatorDirectoryLoading = () => {
+  return (
+    <main className="mx-auto min-h-[calc(100vh-73px)] max-w-6xl px-6 py-10" aria-label="Loading creators">
+      <div className="border-b border-[#292d36] pb-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="h-3 w-28 animate-pulse rounded bg-[#d8f36b55]" />
+            <div className="h-12 w-80 max-w-full animate-pulse rounded-lg bg-[#292d36] md:h-16" />
+            <div className="h-4 w-72 max-w-full animate-pulse rounded bg-[#292d36]" />
+          </div>
+          <div className="h-11 w-full animate-pulse rounded-xl border border-[#292d36] bg-[#111318] md:max-w-sm" />
+        </div>
+        <div className="mt-8 h-4 w-40 animate-pulse rounded bg-[#292d36]" />
+      </div>
+      <div className="my-8 grid gap-4 md:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="flex min-h-36 items-center gap-4 rounded-2xl border border-[#292d36] bg-[#111318] p-4 sm:gap-5 sm:p-5">
+            <div className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-[#292d36] sm:h-20 sm:w-20" />
+            <div className="space-y-3">
+              <div className="h-3 w-20 animate-pulse rounded bg-[#292d36]" />
+              <div className="h-5 w-40 animate-pulse rounded bg-[#292d36]" />
+              <div className="h-3 w-24 animate-pulse rounded bg-[#292d36]" />
             </div>
           </div>
-        </div>
-      );
-}
+        ))}
+      </div>
+      <div className="h-10 animate-pulse rounded-xl bg-[#111318]" />
+    </main>
+  );
+};
 
-export default Loader
+export default CreatorDirectoryLoading;

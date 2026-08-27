@@ -1,9 +1,7 @@
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LogoutButton, Questions } from "@/components";
 import { useServerSession } from "@/hooks";
 import { RiArrowRightSLine } from "react-icons/ri";
-import { BsArrowLeft } from "react-icons/bs";
 import Link from "next/link";
 
 const DashBoard = async () => {
@@ -15,33 +13,23 @@ const DashBoard = async () => {
 
   return (
     session?.user && (
-      <section className="bg-slate-800 min-h-screen">
-        <div className="p-4">
-          <div className="flex justify-between items-center bg-slate-950 rounded p-2">
-            <div className="flex items-center gap-2">
-              <Link className="" href={"/"}><BsArrowLeft /></Link>
-              <p className="font-bold">{session.user.name} <span className="text-normal text-slate-500">{session.user.role === "admin" ? "(admin)": null}</span></p>
+      <section className="min-h-[calc(100vh-73px)] px-6 py-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#d8f36b]">Your workspace</p>
+              <h1 className="text-4xl font-bold tracking-[-0.03em]">Welcome, {session.user.name}.</h1>
+              <p className="mt-2 text-[#858b98]">Keep the questions moving.</p>
             </div>
-            <div className="flex  items-center gap-2 rounded-full">
-              <LogoutButton />
-              <div className="bg-[#F1F1F11F] p-1 rounded-full">
-                <Image
-                  className="rounded-full"
-                  src={session.user.image as string}
-                  alt={session.user.name as string}
-                  width={40}
-                  height={40}
-                />
-              </div>
-            </div>
+            <LogoutButton />
           </div>
-          <div className="flex  flex-col sm:flex-row gap-4 min-h-full my-4">
-            <div className="w-full sm:w-1/4 flex gap-4 flex-col  rounded ">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="flex w-full flex-col gap-3 sm:w-1/4">
               <div>
                 <Link
                   href={session.user?.username}
                   target="_blank"
-                  className="flex items-center justify-between p-2 bg-slate-700 hover:bg-slate-900 transition w-full rounded  py-2"
+                  className="flex w-full items-center justify-between rounded-xl border border-[#292d36] bg-[#111318] p-4 hover:border-[#d8f36b66]"
                 >
                   <span>Your question card</span>
                   <RiArrowRightSLine />
@@ -52,7 +40,7 @@ const DashBoard = async () => {
                   <Link
                     href="/dashboard/admin"
                     target="_blank"
-                    className="flex items-center justify-between p-2 bg-slate-900 hover:bg-slate-700 transition w-full rounded  py-2"
+                    className="flex w-full items-center justify-between rounded-xl border border-[#292d36] bg-[#111318] p-4 hover:border-[#d8f36b66]"
                   >
                     <span>Admin dashboard</span>
                     <RiArrowRightSLine />
@@ -60,7 +48,7 @@ const DashBoard = async () => {
                 )}
               </div>
             </div>
-            <div className="w-full h-fit bg-slate-900 p-4 rounded">
+            <div className="h-fit w-full rounded-2xl border border-[#292d36] bg-[#111318] p-4">
               <Questions email={session.user.email as string} />
             </div>
           </div>
