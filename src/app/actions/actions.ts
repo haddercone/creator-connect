@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { ALLOWED_REQUESTS } from "@/config/rateLimit";
+import { createHash } from "crypto";
 
 const questionRateLimit = new Ratelimit({
   redis: kv,
@@ -16,11 +17,17 @@ const questionRateLimit = new Ratelimit({
 
 function getClientIp(requestHeaders: Headers) {
   return (
-    requestHeaders.get("x-real-ip") ||
-    requestHeaders.get("cf-connecting-ip") ||
     requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("cf-connecting-ip") ||
+    requestHeaders.get("x-real-ip") ||
     "127.0.0.1"
   );
+}
+
+function getSubmitterKey(requestHeaders: Headers) {
+  return createHash("sha256")
+    .update(getClientIp(requestHeaders))
+    .digest("hex");
 }
 
 export async function createQuestion(newQuestion: unknown) {
@@ -41,8 +48,23 @@ export async function createQuestion(newQuestion: unknown) {
 
   try {
     const requestHeaders = await headers();
+    const submitterKey = getSubmitterKey(requestHeaders);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentQuestions = await prisma.question.count({
+      where: {
+        submitterKey,
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentQuestions >= ALLOWED_REQUESTS) {
+      return {
+        error: "Your question limit of 2 questions per hour has been exceeded.",
+      };
+    }
+
     const { success } = await questionRateLimit.limit(
-      `question:${getClientIp(requestHeaders)}`
+      `question:${submitterKey}`
     );
 
     if (!success) {
@@ -55,6 +77,7 @@ export async function createQuestion(newQuestion: unknown) {
       data: {
         questionText: question as string,
         recipientId: recipientId as string,
+        submitterKey,
       },
     });
     return result;
