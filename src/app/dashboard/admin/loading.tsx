@@ -1,52 +1,35 @@
-const loading = () => {
+const AdminDashboardLoading = () => {
   return (
-    <>
-      <div className="h-16 bg-slate-500"></div>
-      <div className="min-h-[80vh] flex justify-center my-4 items-start ">
-        <div
-          role="status"
-          className="md:w-1/2 w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+    <main
+      className="min-h-[calc(100vh-73px)] px-6 py-10"
+      aria-label="Loading admin dashboard"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 space-y-3">
+          <div className="h-3 w-32 animate-pulse rounded bg-[#d8f36b55]" />
+          <div className="h-9 w-64 max-w-full animate-pulse rounded-lg bg-[#292d36]" />
+          <div className="h-4 w-40 animate-pulse rounded bg-[#292d36]" />
+        </div>
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#292d36] bg-[#111318] p-5"
+            >
+              <div className="space-y-3">
+                <div className="h-4 w-72 max-w-full animate-pulse rounded bg-[#292d36]" />
+                <div className="h-4 w-40 animate-pulse rounded bg-[#292d36]" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-24 animate-pulse rounded-lg bg-[#292d36]" />
+                <div className="h-9 w-24 animate-pulse rounded-lg bg-[#292d36]" />
+              </div>
             </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex items-center justify-between pt-4">
-            <div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex items-center justify-between pt-4">
-            <div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex items-center justify-between pt-4">
-            <div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex items-center justify-between pt-4">
-            <div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <span className="sr-only">Loading...</span>
+          ))}
         </div>
       </div>
-    </>
+    </main>
   );
 };
 
-export default loading;
+export default AdminDashboardLoading;

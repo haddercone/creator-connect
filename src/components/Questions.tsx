@@ -12,12 +12,12 @@ function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState("all");
-  const [currentOpenQuestion, setCurrentOpenQuestion] = useState<string>("")
+  const [currentOpenQuestion, setCurrentOpenQuestion] = useState<string>("");
 
-  const questionsTypes : string[] = ["all", "answered", "unanswered"]
-  useEffect(() => {    
+  const questionsTypes: string[] = ["all", "answered", "unanswered"];
+  useEffect(() => {
     (async () => {
-      const questions  = await getAllQuestionsByUser(email);
+      const questions = await getAllQuestionsByUser(email);
       setQuestions(questions as Question[]);
       setLoadQuestions(false);
     })();
@@ -34,32 +34,30 @@ function Questions({ email }: { email: string }) {
     toast.success("Question deleted successfully");
   }
 
-  const filteredQuestions =  questions.filter((question) => {
-      if(activeTab === "all") {
-        return true;
-      } else if (activeTab === "answered") {
-        return question.isAnswered === true;
-      } else {
-        return question.isAnswered === false;
-      }
-    });
+  const filteredQuestions = questions.filter((question) => {
+    if (activeTab === "all") {
+      return true;
+    } else if (activeTab === "answered") {
+      return question.isAnswered === true;
+    } else {
+      return question.isAnswered === false;
+    }
+  });
 
   if (loadQuestions) {
-    return (
-      <QuestionsSkeleton />
-    );
+    return <QuestionsSkeleton />;
   }
 
   return questions && questions.length === 0 ? (
-    <div className="h-[50vh] flex justify-center items-center sm:text-4xl text-slate-500 gap-4 flex-col">
+    <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-[#858b98]">
       <div className="text-6xl">
         <MdOutlineQuestionAnswer />
       </div>
-      <p>No questions yet...</p>
+      <p className="text-lg font-medium">No questions yet...</p>
     </div>
   ) : (
     <>
-      <div className="flex justify-between gap-2 border-b-[1px] border-b-slate-400 overflow-auto whitespace-nowrap">
+      <div className="flex gap-1 overflow-auto rounded-xl border border-[#292d36] bg-[#0a0b0d] p-1 sm:w-fit">
         {questionsTypes.map((type) => {
           const isActive = activeTab === type;
           return (
@@ -67,51 +65,73 @@ function Questions({ email }: { email: string }) {
               key={type}
               onClick={() => {
                 setActiveTab(type);
-                setCurrentOpenQuestion("")
+                setCurrentOpenQuestion("");
               }}
-              className={`${
-                isActive ? "bg-slate-700" : ""
-              } grow mb-2 rounded p-2`}
+              className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                isActive
+                  ? "bg-[#d8f36b] text-[#171b0a]"
+                  : "text-[#858b98] hover:text-[#f4f3ef]"
+              }`}
             >
-              {type.charAt(0).toUpperCase() + type.slice(1)} questions {type === "all" ? `(${questions.length})` : null}
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+              <span className={isActive ? "text-[#171b0a66]" : "text-[#5b616d]"}>
+                {" "}
+                {type === "all" ? `(${questions.length})` : null}
+              </span>
             </button>
           );
         })}
       </div>
-      {filteredQuestions &&
-        filteredQuestions.map((question, idx) => {
-          return (
-            <div key={question?.id as string}>
-              <div className="flex justify-between items-center my-2 bg-slate-950 p-2 rounded">
-                <p>{question?.questionText}</p>
 
-                <div className=" flex justify-between gap-4">
-                  <button
-                    onClick={() => setCurrentOpenQuestion(currentOpenQuestion === question.id ? "": question.id as string)}
-                    className="text-green-700 p-2 rounded hover:bg-[#F1F1F11F]"
-                    title="answer"
-                  >
-                    <BiComment />
-                  </button>
-                  <button
-                    onClick={() => deleteAction(question.id as string)}
-                    className="text-red-700 mr-2 p-2 rounded hover:bg-[#F1F1F11F]"
-                    title="delete"
-                  >
-                    <MdDelete />
-                  </button>
+      <div className="mt-4 flex flex-col gap-3">
+        {filteredQuestions &&
+          filteredQuestions.map((question) => {
+            return (
+              <div key={question?.id as string} className="rounded-xl border border-[#292d36] bg-[#0a0b0d] p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="min-w-0 grow leading-7 text-[#f4f3ef]">
+                    {question?.questionText}
+                  </p>
+                  <div className="flex shrink-0 gap-1">
+                    <button
+                      onClick={() =>
+                        setCurrentOpenQuestion(
+                          currentOpenQuestion === question.id
+                            ? ""
+                            : (question.id as string)
+                        )
+                      }
+                      className="rounded-lg p-2 text-[#d8f36b] transition-colors hover:bg-[#F1F1F11F]"
+                      title="answer"
+                    >
+                      <BiComment />
+                    </button>
+                    <button
+                      onClick={() => deleteAction(question.id as string)}
+                      className="rounded-lg p-2 text-[#f87171] transition-colors hover:bg-[#F1F1F11F]"
+                      title="delete"
+                    >
+                      <MdDelete />
+                    </button>
+                  </div>
                 </div>
+                <AnswerForm
+                  isOpen={currentOpenQuestion === question.id}
+                  setOpenQuestion={() =>
+                    setCurrentOpenQuestion(
+                      currentOpenQuestion === question.id
+                        ? ""
+                        : (question.id as string)
+                    )
+                  }
+                  question={question}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
               </div>
-              <AnswerForm
-                isOpen = {currentOpenQuestion === question.id}
-                setOpenQuestion ={() => setCurrentOpenQuestion(currentOpenQuestion === question.id as string ? "" : question.id as string)}
-                question={question}
-                questions={questions}
-                setQuestions={setQuestions}
-              />
-            </div>
-          );
-        })}
+            );
+          })}
+      </div>
     </>
   );
 }

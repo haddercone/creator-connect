@@ -1,48 +1,31 @@
-import React from 'react'
-
 const QuestionsSkeleton = () => {
   return (
-    
-<div role="status" className="max-w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
-    <div className="flex items-center justify-between">
-        <div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+    <div role="status" aria-label="Loading questions" className="space-y-4">
+      <div className="flex gap-2">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="h-9 w-24 animate-pulse rounded-xl bg-[#292d36]"
+          />
+        ))}
+      </div>
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between gap-4 rounded-xl border border-[#292d36] bg-[#0a0b0d] p-4"
+        >
+          <div className="space-y-2">
+            <div className="h-3 w-56 max-w-full animate-pulse rounded bg-[#292d36]" />
+            <div className="h-3 w-40 animate-pulse rounded bg-[#292d36]" />
+          </div>
+          <div className="flex shrink-0 gap-3">
+            <div className="h-8 w-8 animate-pulse rounded-lg bg-[#292d36]" />
+            <div className="h-8 w-8 animate-pulse rounded-lg bg-[#292d36]" />
+          </div>
         </div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+      ))}
     </div>
-    <div className="flex items-center justify-between pt-4">
-        <div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div className="flex items-center justify-between pt-4">
-        <div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div className="flex items-center justify-between pt-4">
-        <div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div className="flex items-center justify-between pt-4">
-        <div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <span className="sr-only">Loading...</span>
-</div>
-
-  )
-}
+  );
+};
 
 export default QuestionsSkeleton;
