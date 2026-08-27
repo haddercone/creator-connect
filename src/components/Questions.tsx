@@ -3,6 +3,7 @@ import { getAllQuestionsByUser } from "@/app/actions/actions";
 import { Question } from "@/app/dashboard/types";
 import { useEffect, useState } from "react";
 import { MdOutlineQuestionAnswer } from "react-icons/md";
+import AnswerModal from "./AnswerModal";
 import QuestionCard from "./QuestionCard";
 import QuestionsSkeleton from "./skeletons/QuestionsSkeleton";
 
@@ -10,7 +11,7 @@ function Questions({ email }: { email: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loadQuestions, setLoadQuestions] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState("all");
-  const [currentOpenQuestion, setCurrentOpenQuestion] = useState<string>("");
+  const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
 
   const questionsTypes: string[] = ["all", "answered", "unanswered"];
   useEffect(() => {
@@ -52,7 +53,7 @@ function Questions({ email }: { email: string }) {
               key={type}
               onClick={() => {
                 setActiveTab(type);
-                setCurrentOpenQuestion("");
+                setActiveQuestion(null);
               }}
               className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 isActive
@@ -73,21 +74,27 @@ function Questions({ email }: { email: string }) {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {filteredQuestions &&
           filteredQuestions.map((question) => {
-            const isOpen = currentOpenQuestion === question.id;
             return (
               <QuestionCard
                 key={question?.id as string}
                 question={question}
                 questions={questions}
                 setQuestions={setQuestions}
-                isOpen={isOpen}
-                onToggle={() =>
-                  setCurrentOpenQuestion(isOpen ? "" : (question.id as string))
-                }
+                onOpen={() => setActiveQuestion(question)}
               />
             );
           })}
       </div>
+
+      {activeQuestion && (
+        <AnswerModal
+          key={activeQuestion.id as string}
+          question={activeQuestion}
+          questions={questions}
+          setQuestions={setQuestions}
+          onClose={() => setActiveQuestion(null)}
+        />
+      )}
     </>
   );
 }

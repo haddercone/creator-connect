@@ -1,5 +1,6 @@
 import AnswerForm from "./AnswerForm";
 import DashBoardSkeleton from "./skeletons/DashBoardSkeleton";
+import DashboardNav from "./DashboardNav";
 import FormSubmitButton from "./FormSubmitButton";
 import Header from "./Header";
 import LoginButton from "./LoginButton";
@@ -15,6 +16,7 @@ import PodiumSkeleton from "./skeletons/PodiumSkeleton";
 export {
   AnswerForm,
   DashBoardSkeleton,
+  DashboardNav,
   FormSubmitButton,
   Header,
   LoginButton,
