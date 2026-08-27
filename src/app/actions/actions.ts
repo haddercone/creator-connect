@@ -4,6 +4,31 @@ import { prisma } from "@/server/db/PrismaClientSingleton";
 import { Question } from "../dashboard/types";
 import { revalidatePath } from "next/cache";
 import { AnswerSchema, QuestionSchema } from "@/lib/types";
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
+import { ALLOWED_REQUESTS } from "@/config/rateLimit";
+import { createHash } from "crypto";
+
+const questionRateLimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(ALLOWED_REQUESTS, "3600 s"),
+});
+
+function getClientIp(requestHeaders: Headers) {
+  return (
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("cf-connecting-ip") ||
+    requestHeaders.get("x-real-ip") ||
+    "127.0.0.1"
+  );
+}
+
+function getSubmitterKey(requestHeaders: Headers) {
+  return createHash("sha256")
+    .update(getClientIp(requestHeaders))
+    .digest("hex");
+}
 
 export async function createQuestion(newQuestion: unknown) {
   const result = QuestionSchema.safeParse(newQuestion);
@@ -22,10 +47,37 @@ export async function createQuestion(newQuestion: unknown) {
   const { question, recipientId } = result.data;
 
   try {
+    const requestHeaders = await headers();
+    const submitterKey = getSubmitterKey(requestHeaders);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentQuestions = await prisma.question.count({
+      where: {
+        submitterKey,
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentQuestions >= ALLOWED_REQUESTS) {
+      return {
+        error: "Your question limit of 2 questions per hour has been exceeded.",
+      };
+    }
+
+    const { success } = await questionRateLimit.limit(
+      `question:${submitterKey}`
+    );
+
+    if (!success) {
+      return {
+        error: "Your question limit of 2 questions per hour has been exceeded.",
+      };
+    }
+
     const result: Question = await prisma.question.create({
       data: {
         questionText: question as string,
         recipientId: recipientId as string,
+        submitterKey,
       },
     });
     return result;

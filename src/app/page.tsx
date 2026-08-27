@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
+import FindCreatorsButton from "@/components/FindCreatorsButton";
 import Image from "next/image";
-import Link from "next/link";
 
 export default async function Home() {
   return (
@@ -10,7 +10,7 @@ export default async function Home() {
       <Image src={"/hero-icon.svg"} alt="hero-icon" width={100} height={100}/>
         <h1 className="md:text-6xl text-4xl font-bold">Connect With your favourite creators </h1>
         <p className="text-2xl">Ask question to your favourite creators</p>
-        <Link href="/creators" className=" relative px-4 py-2 border-2 border-slate-900 shadow-sm  rounded bg-slate-900  duration-200">Find Creators</Link>
+        <FindCreatorsButton />
       </section>
     </main>
   );

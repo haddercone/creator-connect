@@ -19,9 +19,12 @@ model Question {
   isAnswered      Boolean   @default(false)
   isDeleted       Boolean   @default(false) 
   createdAt       DateTime  @default(now())
+  submitterKey    String?
   recipient       User      @relation(fields: [recipientId], references: [id])
   recipientId     String    @db.ObjectId
   answer          Answer?     
+
+  @@index([submitterKey, createdAt])
 }
 
 model User {
