@@ -87,6 +87,9 @@ prisma/schema.prisma   # Prisma schema + MongoDB datasource
 19. **`"use client"` marks interactive components** (state, effects, event handlers, hooks); keep Server Components free of client-only imports.
 20. **No comments unless they explain a non-obvious decision.** Code should be self-documenting.
 
+### Git & Pull Requests
+21. **Never raise a pull request on your own.** Before creating or pushing to a branch, opening a PR, or updating an existing PR, ask the user for explicit permission. Work stays uncommitted or local until the user approves the action.
+
 ## Definition of Done
 
 A change is only complete when it is:
