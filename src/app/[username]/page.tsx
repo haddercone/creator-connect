@@ -9,8 +9,7 @@ import { Question } from "../dashboard/types";
 import toast from "react-hot-toast";
 import { UserProps } from "@/lib/types";
 
-const UserPage = ({ params } : { params: { username: string }}) => {
-  const { username } = params;
+const UserPage = ({ params } : { params: Promise<{ username: string }>}) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [recipient, setRecipient] = useState<UserProps>({});
@@ -19,9 +18,10 @@ const UserPage = ({ params } : { params: { username: string }}) => {
   useEffect(() => {
     async function getUserData() {
       try {
+        const { username } = await params;
         const [creatoDetailsResponse, answeredQuestionsResponse] = await Promise.all([
-          fetch(`/api/creator-details?username=${username}`),
-          fetch(`/api/answered-questions?username=${username}`)
+          fetch(`/api/creator-details?username=${encodeURIComponent(username)}`),
+          fetch(`/api/answered-questions?username=${encodeURIComponent(username)}`)
         ]);
 
         if (!creatoDetailsResponse.ok || !answeredQuestionsResponse.ok) {
