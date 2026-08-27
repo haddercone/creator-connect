@@ -1,11 +1,9 @@
 "use client";
-import { deleteQuestion, getAllQuestionsByUser } from "@/app/actions/actions";
+import { getAllQuestionsByUser } from "@/app/actions/actions";
 import { Question } from "@/app/dashboard/types";
 import { useEffect, useState } from "react";
-import { BiComment } from "react-icons/bi";
-import { MdDelete, MdOutlineQuestionAnswer } from "react-icons/md";
-import AnswerForm from "./AnswerForm";
-import toast from "react-hot-toast";
+import { MdOutlineQuestionAnswer } from "react-icons/md";
+import QuestionCard from "./QuestionCard";
 import QuestionsSkeleton from "./skeletons/QuestionsSkeleton";
 
 function Questions({ email }: { email: string }) {
@@ -22,17 +20,6 @@ function Questions({ email }: { email: string }) {
       setLoadQuestions(false);
     })();
   }, []);
-
-  async function deleteAction(id: string) {
-    const response = await deleteQuestion(id);
-    if (response?.error) {
-      toast.error(response.error);
-      return;
-    }
-    const newQuestions = questions.filter((question) => question.id !== id);
-    setQuestions(newQuestions);
-    toast.success("Question deleted successfully");
-  }
 
   const filteredQuestions = questions.filter((question) => {
     if (activeTab === "all") {
@@ -83,52 +70,21 @@ function Questions({ email }: { email: string }) {
         })}
       </div>
 
-      <div className="mt-4 flex flex-col gap-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {filteredQuestions &&
           filteredQuestions.map((question) => {
+            const isOpen = currentOpenQuestion === question.id;
             return (
-              <div key={question?.id as string} className="rounded-xl border border-[#292d36] bg-[#0a0b0d] p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="min-w-0 grow leading-7 text-[#f4f3ef]">
-                    {question?.questionText}
-                  </p>
-                  <div className="flex shrink-0 gap-1">
-                    <button
-                      onClick={() =>
-                        setCurrentOpenQuestion(
-                          currentOpenQuestion === question.id
-                            ? ""
-                            : (question.id as string)
-                        )
-                      }
-                      className="rounded-lg p-2 text-[#d8f36b] transition-colors hover:bg-[#F1F1F11F]"
-                      title="answer"
-                    >
-                      <BiComment />
-                    </button>
-                    <button
-                      onClick={() => deleteAction(question.id as string)}
-                      className="rounded-lg p-2 text-[#f87171] transition-colors hover:bg-[#F1F1F11F]"
-                      title="delete"
-                    >
-                      <MdDelete />
-                    </button>
-                  </div>
-                </div>
-                <AnswerForm
-                  isOpen={currentOpenQuestion === question.id}
-                  setOpenQuestion={() =>
-                    setCurrentOpenQuestion(
-                      currentOpenQuestion === question.id
-                        ? ""
-                        : (question.id as string)
-                    )
-                  }
-                  question={question}
-                  questions={questions}
-                  setQuestions={setQuestions}
-                />
-              </div>
+              <QuestionCard
+                key={question?.id as string}
+                question={question}
+                questions={questions}
+                setQuestions={setQuestions}
+                isOpen={isOpen}
+                onToggle={() =>
+                  setCurrentOpenQuestion(isOpen ? "" : (question.id as string))
+                }
+              />
             );
           })}
       </div>

@@ -87,7 +87,7 @@ const AnswerForm = ({
 
   return (
     isOpen && (
-      <form action={answerAction} className="mt-3 border-t border-[#292d36] pt-3">
+      <form action={answerAction} className="border-t border-[#292d36] px-4 pb-4 pt-3">
         <textarea
           value={answerText}
           placeholder="Your answer here..."
