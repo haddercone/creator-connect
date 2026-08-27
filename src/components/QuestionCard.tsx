@@ -4,31 +4,26 @@ import { deleteQuestion } from "@/app/actions/actions";
 import { Question } from "@/app/dashboard/types";
 import { useClickOutside } from "@/hooks";
 import { Dispatch, SetStateAction, useState } from "react";
-import {
-  RiArrowDropDownLine,
-  RiDeleteBinLine,
-  RiMore2Fill,
-} from "react-icons/ri";
-import AnswerForm from "./AnswerForm";
+import { RiChat1Line, RiDeleteBinLine, RiMore2Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 
 type QuestionCardProps = {
   question: Question;
   questions: Question[];
   setQuestions: Dispatch<SetStateAction<Question[]>>;
-  isOpen: boolean;
-  onToggle: () => void;
+  onOpen: () => void;
 };
 
 const QuestionCard = ({
   question,
   questions,
   setQuestions,
-  isOpen,
-  onToggle,
+  onOpen,
 }: QuestionCardProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useClickOutside(() => setMenuOpen(false)) as React.RefObject<HTMLDivElement>;
+  const menuRef = useClickOutside(
+    () => setMenuOpen(false)
+  ) as React.RefObject<HTMLDivElement>;
 
   const answered = Boolean(question.isAnswered);
 
@@ -43,28 +38,17 @@ const QuestionCard = ({
   }
 
   return (
-    <div
-      className={`rounded-2xl border bg-[#0a0b0d] transition-colors ${
-        isOpen ? "border-[#d8f36b66]" : "border-[#292d36]"
-      }`}
-    >
+    <div className="rounded-2xl border border-[#292d36] bg-[#0a0b0d] transition-colors hover:border-[#d8f36b33]">
       <div className="flex items-start justify-between gap-3 p-4">
         <button
           type="button"
-          onClick={onToggle}
-          title={isOpen ? "Close answer" : "Answer this question"}
+          onClick={onOpen}
+          title="Answer this question"
           className="min-w-0 grow cursor-pointer rounded-lg text-left"
         >
-          <span className="flex items-baseline gap-3">
-            <p className="min-w-0 grow leading-6 text-[#f4f3ef]">
-              {question.questionText}
-            </p>
-            <RiArrowDropDownLine
-              className={`h-7 w-7 shrink-0 text-[#858b98] transition-transform ${
-                isOpen ? "rotate-180" : ""
-              }`}
-            />
-          </span>
+          <p className="min-w-0 leading-6 text-[#f4f3ef]">
+            {question.questionText}
+          </p>
           <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium">
             <span
               className={`h-1.5 w-1.5 rounded-full ${
@@ -74,6 +58,10 @@ const QuestionCard = ({
             <span className={answered ? "text-[#d8f36b]" : "text-[#858b98]"}>
               {answered ? "Answered" : "Awaiting your answer"}
             </span>
+          </span>
+          <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#d8f36b]">
+            <RiChat1Line className="h-3.5 w-3.5" />
+            {answered ? "Update answer" : "Answer"}
           </span>
         </button>
 
@@ -98,14 +86,6 @@ const QuestionCard = ({
           )}
         </div>
       </div>
-
-      <AnswerForm
-        isOpen={isOpen}
-        setOpenQuestion={onToggle}
-        question={question}
-        questions={questions}
-        setQuestions={setQuestions}
-      />
     </div>
   );
 };
