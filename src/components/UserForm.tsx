@@ -69,23 +69,22 @@ const UserForm = ({
     <form ref={ref} action={clientAction}>
       <textarea
         placeholder={`Ask your question to ${recipientName}...`}
-        className="rounded w-full resize-none  min-h-48 max-h-48 outline-none p-2 bg-[#F1F1F11F] border-2 border-slate-900"
+        className="min-h-44 w-full resize-none rounded-xl border border-[#3a404c] bg-[#0a0b0d] p-4 leading-7 outline-none placeholder:text-[#858b98] focus:border-[#d8f36b]"
         name="question"
         cols={30}
         rows={5}
         required
       ></textarea>{" "}
-      <br />
       <FormSubmitButton />
       {timeStamp && (
-        <p className="text-sm">Last questions asked at {timeStamp}</p>
+        <p className="text-xs text-[#858b98]">Last asked at {timeStamp}</p>
       )}
-      <div className="bg-blue-700 py-2 px-4 flex justify-start items-center gap-2 rounded my-2">
-        <span className="text-xl">
+      <div className="my-3 flex items-start gap-2 rounded-lg border border-[#292d36] bg-[#171a21] px-3 py-2 text-[#858b98]">
+        <span className="mt-0.5 text-lg text-[#d8f36b]">
           <CiCircleInfo />
         </span>
-        <span className="text-xs">
-          Please note, to prevent spamming, you are only allowed to ask 2 questions per hour.
+        <span className="text-xs leading-5">
+          Two questions per hour, per creator.
         </span>
       </div>
     </form>

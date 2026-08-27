@@ -54,57 +54,65 @@ const UserPage = ({ params } : { params: Promise<{ username: string }>}) => {
   
   return (
     <>
-      <section className=" flex min-h-screen gap-10 justify-center items-center md:p-5 md:items-start md:flex-row flex-col  bg-gray-900  text-white py-8 ">
-          <div className="bg-[#00000039] lg:w-1/3 md:w-1/2 p-4 rounded">
+      <main className="min-h-[calc(100vh-73px)] bg-transparent px-6 py-10 text-white">
+        <section className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-start">
+          <div className="relative overflow-hidden rounded-2xl border border-[#292d36] bg-[#111318] p-6 md:sticky md:top-28 md:w-2/5">
+            <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-[#d8f36b0d]" />
             <div className="flex gap-5 flex-col justify-center items-center">
               <Image
                 draggable={false}
                 width={200}
                 height={200}
                 priority={true}
-                className="w-40 h-40 rounded-full"
+                className="h-40 w-40 rounded-full ring-4 ring-[#d8f36b22]"
                 src={recipient?.profilePic as string}
                 alt={recipient?.name as string}
               />
-              <p className="text-4xl font-bold">{recipient?.name}</p>
+              <p className="text-center text-4xl font-bold tracking-[-0.03em]">{recipient?.name}</p>
+              <p className="text-sm text-[#858b98]">@{recipient?.username}</p>
             </div>
 
-            <div className="flex justify-center items-center flex-col gap-5 ">
-              <p>Ask your question to {recipient?.name}</p>
+            <div className="mt-8 border-t border-[#292d36] pt-6">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#d8f36b]">Open inbox</p>
+              <p className="mb-5 text-lg font-medium">Ask something worth answering.</p>
               <UserForm
                 recipientId={recipient?.id as string}
                 recipientName={recipient?.name as string}
               />
             </div>
           </div>
-          <div className="md:w-1/2 bg-[#00000039] rounded">
-            <p className="px-4 text-2xl bg-slate-600 py-2 rounded-t-sm">
-              Questions answered by{" "}
-              <span className="font-bold">{recipient?.name}</span>
-            </p>
-            <div className="flex px-4 mt-4  gap-5 flex-col pb-4">
+          <div className="rounded-2xl border border-[#292d36] bg-[#111318] md:w-3/5">
+            <div className="flex items-end justify-between border-b border-[#292d36] px-6 py-5">
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#858b98]">Public answers</p>
+                <p className="text-xl font-semibold">From <span className="font-bold">{recipient?.name}</span></p>
+              </div>
+              <span className="text-sm text-[#858b98]">{answeredQuestions.length} answered</span>
+            </div>
+            <div className="flex flex-col gap-3 px-4 pb-4 pt-4">
               {answeredQuestions.length > 0 ? (
                 answeredQuestions.map((answeredQuestion) => {
                   return (
                     
-                      <div key={answeredQuestion.id} className="border border-slate-600 grow p-2 rounded">
-                        <p className=" font-bold border border-transparent border-b-slate-600 pb-2">
+                      <div key={answeredQuestion.id} className="grow rounded-xl border border-[#292d36] bg-[#171a21] p-4">
+                        <p className="border-b border-[#292d36] pb-3 font-semibold">
                           {answeredQuestion.questionText}
                         </p>
-                        <p className="text-slate-400 pt-2">
+                        <p className="pt-3 leading-7 text-[#aeb3bd]">
                           {answeredQuestion.answer?.answer}
                         </p>
                       </div>
                   );
                 })
               ) : (
-                <div className="bg-[#F1F1F11F] lg:text-2xl p-2 flex justify-center text-center items-center min-h-[50vh] rounded text-slate-400">
-                  <p>No Questions answered yet...</p>
+                <div className="flex min-h-[40vh] items-center justify-center rounded-xl bg-[#171a21] p-6 text-center text-[#858b98]">
+                  <p>No answers yet. Start the conversation.</p>
                 </div>
               )}
             </div>
           </div>
-      </section>
+        </section>
+      </main>
     </>
   );
 };

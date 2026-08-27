@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Providers from "./providers";
-const inter = Inter({ subsets: ["latin"] });
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Creator connect",
@@ -17,8 +16,9 @@ export default function RootLayout({
 }) {
   return (
         <html lang="en">
-          <body className={inter.className}>
+          <body>
             <Providers>
+              <Header />
               {children}
               <Toaster position="top-center"/>
             </Providers>  

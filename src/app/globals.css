@@ -3,26 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --ink: #0a0b0d;
+  --panel: #111318;
+  --panel-raised: #171a21;
+  --line: #292d36;
+  --muted: #858b98;
+  --text: #f4f3ef;
+  --accent: #d8f36b;
+  --accent-ink: #171b0a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 15, 23 ,42;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  background-repeat: no-repeat;
+  color: var(--text);
+  background: var(--ink);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  min-height: 100vh;
+}
+
+button,
+a,
+input,
+textarea {
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease,
+    opacity 180ms ease, transform 180ms ease;
+}
+
+::selection {
+  color: var(--accent-ink);
+  background: var(--accent);
 }

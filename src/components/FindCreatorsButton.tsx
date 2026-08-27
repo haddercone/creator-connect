@@ -14,7 +14,7 @@ const FindCreatorsButton = () => {
       onClick={() => {
         startTransition(() => router.push("/creators"));
       }}
-      className="relative px-4 py-2 border-2 border-slate-900 shadow-sm rounded bg-slate-900 duration-200 disabled:cursor-wait disabled:opacity-70"
+      className="relative rounded-lg bg-[#d8f36b] px-5 py-3 font-semibold text-[#171b0a] shadow-[0_0_28px_rgba(216,243,107,0.12)] hover:bg-[#e4fa8a] disabled:cursor-wait disabled:opacity-70"
     >
       {isPending ? "Find Creators..." : "Find Creators"}
     </button>
