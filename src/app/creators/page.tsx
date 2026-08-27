@@ -9,15 +9,18 @@ import { notFound } from "next/navigation";
 const CreatorsList = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const currentPage = searchParams["page"] ?? "1";
+  const params = await searchParams;
+  const pageParam = params["page"];
+  const currentPage = Array.isArray(pageParam) ? pageParam[0] : pageParam;
+  const pageNumber = Math.max(1, Number(currentPage) || 1);
   const perPage = 4;
 
-  const start = (Number(currentPage) - 1) * perPage;
+  const start = (pageNumber - 1) * perPage;
   const end = start + perPage;
   const { response, totalUsers, error } = await getCreatorsByPage(
-    Number(currentPage),
+    pageNumber,
     perPage
   );
 
