@@ -113,11 +113,11 @@ Notes:
 - Trigger: {trigger_reason}
 """
 
-    # Create branch locally
+    # Create branch locally, resetting it if it already exists
     subprocess.run(['git', 'config', 'user.name', 'junior-agent-bot'], check=True)
     subprocess.run(['git', 'config', 'user.email', 'junior@local'], check=True)
-    # Create branch from current HEAD
-    subprocess.run(['git', 'checkout', '-b', branch], check=True)
+    # Create branch from current HEAD (-B resets an existing branch)
+    subprocess.run(['git', 'checkout', '-B', branch], check=True)
 
     # Write the plan file
     os.makedirs(os.path.dirname(plan_path), exist_ok=True)
@@ -127,8 +127,10 @@ Notes:
     subprocess.run(['git', 'add', plan_path], check=True)
     subprocess.run(['git', 'commit', '-m', f'feat: junior agent — start work for issue #{issue_number}'], check=True)
 
-    # Push branch using token auth
+    # Push branch using token auth. Delete any stale copy of this bot branch
+    # first so re-runs on the same issue are idempotent.
     push_url = f'https://x-access-token:{token}@github.com/{owner}/{repo_name}.git'
+    subprocess.run(['git', 'push', push_url, '--delete', f'refs/heads/{branch}'], check=False)
     subprocess.run(['git', 'push', push_url, f'HEAD:refs/heads/{branch}'], check=True)
     print('Pushed branch', branch)
 
@@ -136,21 +138,26 @@ Notes:
     repo_info = api_request('GET', f'/repos/{owner}/{repo_name}', token)
     default_branch = repo_info.get('default_branch', 'main')
 
-    # Create a PR
-    pr_title = f'WIP: start work on issue #{issue_number} — junior agent'
-    pr_body = f'Automated work-in-progress branch created by the Junior Dev Agent for issue #{issue_number}. See {plan_path} for the initial plan.'
-    pr = api_request('POST', f'/repos/{owner}/{repo_name}/pulls', token, {
-        'title': pr_title,
-        'head': branch,
-        'base': default_branch,
-        'body': pr_body
-    })
-    pr_number = pr.get('number')
-    print('Created PR', pr_number)
+    # Reuse an existing open PR for this branch instead of opening a duplicate
+    existing_prs = api_request('GET', f'/repos/{owner}/{repo_name}/pulls?state=open&head=' + urllib.parse.quote(f'{owner}:{branch}'), token)
+    existing_pr = next((pr for pr in existing_prs if pr.get('head', {}).get('ref') == branch), None)
+    if existing_pr:
+        pr_url = existing_pr.get('html_url')
+        print('Reusing existing PR', existing_pr.get('number'))
+    else:
+        pr_title = f'WIP: start work on issue #{issue_number} — junior agent'
+        pr_body = f'Automated work-in-progress branch created by the Junior Dev Agent for issue #{issue_number}. See {plan_path} for the initial plan.'
+        pr = api_request('POST', f'/repos/{owner}/{repo_name}/pulls', token, {
+            'title': pr_title,
+            'head': branch,
+            'base': default_branch,
+            'body': pr_body
+        })
+        pr_url = pr.get('html_url')
+        print('Created PR', pr.get('number'))
 
-    # Optionally post another comment with PR link
-    pr_url = pr.get('html_url')
-    api_request('POST', f'/repos/{owner}/{repo_name}/issues/{issue_number}/comments', token, {'body': f'Opened WIP PR: {pr_url}'})
+    # Post a comment with the PR link
+    api_request('POST', f'/repos/{owner}/{repo_name}/issues/{issue_number}/comments', token, {'body': f'WIP PR: {pr_url}'})
     print('Posted PR link to issue')
 
 if __name__ == '__main__':
