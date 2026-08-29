@@ -6,7 +6,8 @@ Agent instruction file for **Creator Connect Q&A platform**. Follow these conven
 
 Creator Connect lets fans ask questions to creators. Questions are moderated by an admin, answered by creators, and shown publicly on a creator's page.
 
-- **Stack**: Next.js 16 (App Router + Turbopack), React 18, TypeScript (strict), Tailwind CSS, Prisma + MongoDB, Next-Auth (GitHub/Twitter), Zod, Upstash Ratelimit + Vercel KV, Recoil, react-hot-toast.
+- **Stack**: Next.js 16 (App Router + Turbopack), React 18, TypeScript (strict), Tailwind CSS, Prisma + MongoDB, Next-Auth (GitHub/Twitter), Zod, Recoil, react-hot-toast.
+- **Rate limiting**: per-creator 2 questions / hour enforced in `createQuestion` by counting recent rows for the hashed `submitterKey` (recipientId + client IP) against `ALLOWED_REQUESTS` in `src/config/rateLimit.ts`.
 - **Auth**: Next-Auth. `ADMIN_EMAIL` gates the admin role on the JWT; `/dashboard/admin` redirects non-admins to `/dashboard`.
 - **Storage**: Prisma schema in `prisma/schema.prisma` (MongoDB, `@db.ObjectId` on `@id auto()`). The `Question` model uses `isApproved` / `isAnswered` / `isDeleted` flags to drive the moderation → answer → public pipeline.
 

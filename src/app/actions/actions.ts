@@ -5,15 +5,8 @@ import { Question } from "../dashboard/types";
 import { revalidatePath } from "next/cache";
 import { AnswerSchema, QuestionSchema } from "@/lib/types";
 import { headers } from "next/headers";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
 import { ALLOWED_REQUESTS } from "@/config/rateLimit";
 import { createHash } from "crypto";
-
-const questionRateLimit = new Ratelimit({
-  redis: kv,
-  limiter: Ratelimit.slidingWindow(ALLOWED_REQUESTS, "3600 s"),
-});
 
 function getClientIp(requestHeaders: Headers) {
   return (
@@ -58,16 +51,6 @@ export async function createQuestion(newQuestion: unknown) {
     });
 
     if (recentQuestions >= ALLOWED_REQUESTS) {
-      return {
-        error: "Your question limit of 2 questions per hour has been exceeded.",
-      };
-    }
-
-    const { success } = await questionRateLimit.limit(
-      `question:${submitterKey}`
-    );
-
-    if (!success) {
       return {
         error: "Your question limit of 2 questions per hour has been exceeded.",
       };

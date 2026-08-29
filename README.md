@@ -13,7 +13,7 @@ Creator Connect is a Q&A platform that enables users from around the world to as
 - MongoDB Database
 - Next-Auth for authentication
 - Tailwind CSS
-- Vercel KV and Upstash Ratelimit for rate limiting
+- Rate limiting with Prisma (MongoDB count, 2 questions/hour per creator)
 - Server actions
 - API routes
 - App router
@@ -28,7 +28,7 @@ Creator Connect is a Q&A platform that enables users from around the world to as
 
 ## Important Notes
 
-- **Rate Limiting:** The rate limiting feature on the creator page ensures a controlled flow of questions, preventing spam and misuse of the platform.
+- **Rate Limiting:** Submissions are capped at 2 questions per hour per creator, enforced server-side in the `createQuestion` action by counting recent questions for a hashed submitter key. This prevents spam and misuse of the platform.
 
 - **Authentication:** Users can log in using their Twitter or GitHub accounts, ensuring a secure and streamlined authentication process.
 
