@@ -1,0 +1,15 @@
+# Modelfile for the Junior Agent coding model.
+# Ollama's default context window (2-4k tokens) is far too small for an
+# agentic edit/verify loop and silently breaks it mid-task. Raising it here
+# (Modelfile PARAMETER takes precedence over the model's baked-in default and
+# over OLLAMA_CONTEXT_LENGTH) is the single most impactful reliability fix.
+#
+# Pick the model that fits your GPU box VRAM and set it as MODEL_TAG in serve.sh:
+#   >=24GB : qwen3-coder:30b   (best autonomous multi-file edits)
+#   16-24GB: qwen3-coder:14b or devstral-small
+#   <=16GB : qwen3:8b          (minimal viable; weaker on multi-file work)
+
+FROM {{MODEL_TAG}}
+
+PARAMETER num_ctx 65536
+PARAMETER temperature 0.2
