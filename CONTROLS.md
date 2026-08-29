@@ -13,7 +13,7 @@ This file is the authoritative specification for the tech stack, architecture, a
 | ORM / DB     | Prisma + MongoDB                                    | ^5.7.1, `@db.ObjectId` primary keys      |
 | Auth         | Next-Auth                                           | ^4.24.14 (GitHub + Twitter providers)    |
 | Validation   | Zod                                                 | ^3.22.4, `safeParse` at every boundary   |
-| Rate limiting| Upstash Ratelimit + Vercel KV                       | sliding window, 2 questions / 60 min     |
+| Rate limiting| Prisma count (`Question.submitterKey`)             | 2 questions / 60 min per creator         |
 | Client state | Recoil                                              | ^0.7.7                                   |
 | Notifications| react-hot-toast                                     | ^2.4.1                                   |
 | Icons        | react-icons                                         | ^4.12.0                                  |
@@ -69,7 +69,7 @@ prisma/schema.prisma   # Prisma schema + MongoDB datasource
 8. **Keep derived logic in `src/lib/`.** Pure helpers (`filterUsers`, `getUpdatedFields`, `getLastSuccessfullQuestionsTimeStamp`) live in `src/lib/helpers.ts`; shared types and Zod schemas live in `src/lib/types.ts`. `src/lib/mongo/*` holds Prisma query wrappers only.
 
 ### Security & Limits
-9. **Rate limit spam surfaces.** Submissions are limited to 2 questions per creator per hour via a dual check: a hashed `submitterKey` (recipientId + client IP) DB count plus an Upstash sliding-window limiter. Keep the constants in `src/config/rateLimit.ts`.
+9. **Rate limit spam surfaces.** Submissions are limited to 2 questions per creator per hour. `createQuestion` counts `Question` rows in the last 60 minutes matching the hashed `submitterKey` (recipientId + client IP) and rejects when the count is `>= ALLOWED_REQUESTS`. Keep the constants in `src/config/rateLimit.ts`.
 10. **Hash identifying payloads** (`createHash("sha256")`); never store raw IPs.
 11. **Authorization is server-side.** `redirect()` in Server Components when unauthenticated or when a non-admin hits `/dashboard/admin`; admin role comes from `process.env.ADMIN_EMAIL` on the JWT.
 12. **Signed-in session only reaches own data**; `getAllQuestionsByUser` scopes by the session email and only returns `isApproved: true` questions.
