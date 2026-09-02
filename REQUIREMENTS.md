@@ -22,6 +22,58 @@ We need to build an AI agent that will help us build new features for this appli
 5. The agent creates a Pull Request
 6. The agent posts the PR to a Discord channel for human review
 
+#### Workflow Diagram (Mermaid)
+
+```mermaid
+flowchart TD
+    A["👤 User creates GitHub Issue"] --> B["💬 User tags @agent-app in issue comment"]
+
+    B --> C["⚡ GitHub sends webhook event<br/>(issues / issue_comment)"]
+    C --> D["🌐 Agent Webhook Server<br/>(separate repo)"]
+
+    D --> E["🔑 Verify webhook signature<br/>using webhook secret"]
+    E -->|"invalid"| E1["❌ Reject request"]
+    E -->|"valid"| F{"Is @agent-app<br/>tagged?"}
+    F -->|"no"| F1["🛑 Ignore event"]
+    F -->|"yes"| G["🔑 Generate installation token<br/>(App ID + private key)"]
+
+    G --> H["📖 Fetch issue context via GitHub API<br/>(body, comments, labels, repo files)"]
+
+    H --> I["🧠 Send context to LLM<br/>on NVIDIA Cloud"]
+    I --> J["🤖 Agent analyzes issue<br/>& builds solution plan"]
+
+    J --> K["📝 Apply changes:<br/>create branch → commit code"]
+
+    K --> L["🔀 Open Pull Request<br/>against creator-connect repo"]
+
+    L --> M{"Optional: self<br/>code review?"}
+    M -->|"no"| N["📢 Post PR to<br/>Discord channel"]
+    M -->|"yes"| M1["🔬 Run LLM review on own diff"] --> M2["💬 Post review comments to PR"] --> N
+
+    N --> O["👨‍💻 Humans review PR in GitHub"]
+
+    style G fill:#2d2a1e,stroke:#d8f36b,stroke-width:2px
+    style I fill:#1e2a2d,stroke:#6bd8f3,stroke-width:2px
+    style N fill:#2d1e2a,stroke:#f36bd8,stroke-width:2px
+    style L fill:#1e2d1e,stroke:#6bf3a0,stroke-width:2px
+```
+
+#### Step-by-Step Flow Description
+
+1. **Issue creation** — A user (team member) creates an issue describing a feature or bug.
+2. **Tagging** — The user adds a comment tagging the GitHub App (e.g., `@creator-connect-agent`), which is the trigger to start work.
+3. **Webhook delivery** — GitHub sends an `issue_comment` webhook event to the agent's webhook server.
+4. **Signature verification** — The server verifies the webhook payload using the shared webhook secret to ensure it came from GitHub.
+5. **Trigger check** — The server checks whether the App was tagged; unrelated events are ignored.
+6. **Authentication** — The agent exchanges the App ID + private key for a short-lived installation access token.
+7. **Context gathering** — Using the token, the agent reads the issue body, comments, and relevant repository files to understand the task.
+8. **LLM processing** — The gathered context is sent to the LLM hosted on NVIDIA Cloud, which analyzes the issue and produces a solution plan and code.
+9. **Implementation** — The agent creates a branch, writes the code/changes, and commits.
+10. **PR creation** — The agent opens a Pull Request referencing the issue (e.g., `fixes #12`).
+11. **Optional self-review** — The agent runs the LLM over its own diff and posts review comments.
+12. **Discord notification** — The agent posts the PR link and summary to a Discord channel to notify the team for human review.
+13. **Human review** — Team members review and merge the PR in GitHub.
+
 ### Agent Responsibilities
 
 - **Read issues:** Understand the requirements and context from GitHub issues
