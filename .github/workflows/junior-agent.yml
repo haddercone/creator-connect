@@ -22,9 +22,24 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Ollama client deps (none needed; stdlib only)
+        run: echo "Junior Agent uses only the Python stdlib."
+
+      - name: Check Ollama endpoint health
+        env:
+          OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+        run: |
+          curl -fsS -H "Authorization: Bearer ${OLLAMA_API_KEY}" \
+            "${OLLAMA_API_URL%/}/api/tags" || { echo "Ollama endpoint unreachable"; exit 1; }
+
       - name: Run Junior Agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
+          OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL }}
+          OPEN_READY_PR: ${{ vars.OPEN_READY_PR }}
         run: python3 .github/scripts/junior-agent.py
